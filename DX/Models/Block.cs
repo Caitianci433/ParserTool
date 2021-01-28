@@ -39,14 +39,18 @@ namespace DX.Models
 
 		public byte[] PacketData;
 
+		public ulong Time;
+
 
 		public BlockBody(byte[] BlockBody)
 		{
 			InterfaceID = Tools.bytesToInt(BlockBody, 0);
 			Timestamp_High = Tools.bytesToInt(BlockBody, 4);
 			Timestamp_Low = Tools.bytesToInt(BlockBody, 8);
+
 			CapturedLen = Tools.bytesToInt(BlockBody, 12);
-			PacketLen = Tools.bytesToInt(BlockBody, 16);
+			PacketLen = BitConverter.ToInt32(BlockBody, 16);
+			Time = BitConverter.ToUInt64(BlockBody,4);
 
 			PacketData = Tools.GetPartialBytes(BlockBody, 20, CapturedLen);
 		}
@@ -61,9 +65,12 @@ namespace DX.Models
 		public int TCP_SourcePort { get; set; }
 		public int TCP_DestinationPort { get; set; }
 		public string HTTP { get; set; }
+		public ulong Time { get; set; }
+
 
 		public PacketData(byte[] PacketData) 
 		{
+			
 			IP_Protocol = Convert.ToInt32(PacketData[23]);
 
 			IP_SourceAddress = new int[4] { Convert.ToInt32(PacketData[26]), 
@@ -78,9 +85,14 @@ namespace DX.Models
 
 			TCP_SourcePort = Tools.bytes2ToInt(PacketData[34], PacketData[35]);
 			TCP_DestinationPort = Tools.bytes2ToInt(PacketData[36], PacketData[37]);
-            if (PacketData.Length>54)
+
+
+			
+
+			if (PacketData.Length>54)
             {
-				HTTP = Encoding.ASCII.GetString(Tools.GetPartialBytes(PacketData, 54, PacketData.Length - 54));
+				// int x = Tools.bytes2ToInt(PacketData[16], PacketData[17]) - 40;
+				HTTP = Encoding.ASCII.GetString(Tools.GetPartialBytes(PacketData, 54, Tools.bytes2ToInt(PacketData[16], PacketData[17]) - 40));
             }
             else
             {

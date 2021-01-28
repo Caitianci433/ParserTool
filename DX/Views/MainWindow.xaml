@@ -12,7 +12,7 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ListView x:Name="ListView" ItemsSource="{Binding Path=TcpPackets}" Grid.Row="0" Grid.Column="0">
+        <ListView x:Name="ListView" ItemsSource="{Binding Path=TcpPackets}" Grid.Row="0" Grid.Column="0" SelectionChanged="ListView_SelectionChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="NO." Width="75" DisplayMemberBinding="{Binding Path=ID}"/>
@@ -20,14 +20,11 @@
                     <GridViewColumn Header="目的端口" Width="75" DisplayMemberBinding="{Binding Path=TCP_DestinationPort}"/>
                     <GridViewColumn Header="源地址" Width="75" DisplayMemberBinding="{Binding Path=IP_SourceAddress}"/>
                     <GridViewColumn Header="目的地址" Width="75" DisplayMemberBinding="{Binding Path=IP_DestinationAddress}"/>
+
                 </GridView>
             </ListView.View>
-            
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding TCP_SourcePort}" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
+
+
         </ListView>
 
         <GridSplitter Grid.Row="0" Grid.Column="1" Width="10" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Wheat"/>
@@ -42,17 +39,12 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <ListView x:Name="ListView2" ItemsSource="{Binding}" Grid.Row="0" Grid.Column="0">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="序列号" Width="75" />
-                    <GridViewColumn Header="书名" Width="75"/>
-                        <GridViewColumn Header="类型" Width="75" />
-                    </GridView>
-            </ListView.View>
-        </ListView>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding TextMessage}"/>
+
             <GridSplitter Grid.Row="1" Grid.Column="0" Height="10" HorizontalAlignment="Stretch" Background="Wheat"/>
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding TextMessage}"/>
-        </Grid>       
+
+         
+
+        </Grid>
     </Grid>
 </Window>

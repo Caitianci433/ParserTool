@@ -1,6 +1,7 @@
 ﻿using DX.Common;
 using DX.Models;
 using Prism.Mvvm;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -25,6 +26,13 @@ namespace DX.ViewModels
         {
             get { return _text; }
             set { SetProperty(ref _text, value); }
+        }
+
+        private string _httpContent = "";
+        public string HttpContent
+        {
+            get { return _httpContent; }
+            set { SetProperty(ref _httpContent, value); }
         }
 
         private List<ListView_Model> _tcppackets = new List<ListView_Model>();
@@ -68,9 +76,19 @@ namespace DX.ViewModels
                 if (Tools.bytesToInt((itor.Current as Block).BlockType, 0) == 6)
                 {
                     BlockBody blockBody = new BlockBody((itor.Current as Block).BlockBody);
-                    PacketData packetData = new PacketData(blockBody.PacketData);
-                    Packist.Add(packetData);
-                    str.Append(packetData.HTTP);
+                    if (blockBody.PacketData.Length > 60)
+                    {
+                        PacketData packetData = new PacketData(blockBody.PacketData);
+                        packetData.Time = blockBody.Time;
+                        if (packetData.IP_Protocol==6)
+                        {
+                            Packist.Add(packetData);
+                        }
+                        
+                        str.Append(packetData.HTTP);
+                    }
+                    
+                    
 
                 }
 
@@ -122,37 +140,142 @@ namespace DX.ViewModels
                 }
             }
             List<ListView_Model> listViewModel = new List<ListView_Model>();
-            int no = 0;
+            int no = -1;
             foreach (var datalist in mp.Values)
             {
-                foreach (var item in datalist)
+                List<string> httpreqreslist = new List<string>();
+                int indx = 0;
+                StringBuilder builder = new StringBuilder("");
+                PacketData packbuffer = datalist[0];
+                if (!datalist[0].HTTP.StartsWith("GET")&& !datalist[0].HTTP.StartsWith("POST"))
                 {
-                    no += 1;
-                    ListView_Model ls = new ListView_Model();
-                    ls.ID = no;
-                    ls.IP_DestinationAddress = string.Join(",", item.IP_DestinationAddress);
-                    ls.IP_SourceAddress = string.Join(",", item.IP_SourceAddress);
-                    ls.TCP_DestinationPort = item.TCP_DestinationPort;
-                    ls.TCP_SourcePort = item.TCP_SourcePort;
-                    listViewModel.Add(ls);
+                    indx = 2;
                 }
+                for (int i = indx; i < datalist.Count; i++)
+                {
+                    if (datalist[i].HTTP.StartsWith("GET")|| datalist[i].HTTP.StartsWith("POST"))
+                    {
+                        httpreqreslist.Add(builder.ToString());
+                        //
+                        no += 1;
+                        listViewModel.Add(CreatListViewModel(packbuffer, builder.ToString(),true,no));
+                        builder.Clear();
+                    }
+                    if (datalist[i].HTTP.StartsWith("HTTP"))
+                    {
+                        httpreqreslist.Add(builder.ToString());
+                        no += 1;
+                        listViewModel.Add(CreatListViewModel(packbuffer, builder.ToString(), false, no));
+                        builder.Clear();
+                    }
+                    packbuffer = datalist[i];
+                    builder.Append(datalist[i].HTTP);
 
-
-                CreateHttpFromTCP(datalist);
+                }
             }
+            listViewModel.Remove(listViewModel[0]);
             TcpPackets = listViewModel;
+        }
+
+
+
+
+        private ListView_Model CreatListViewModel(PacketData data,string message, bool reqres,int no) 
+        {
+            
+            ListView_Model ls = new ListView_Model();
+            ls.ID = no;
+            ls.IP_DestinationAddress = string.Join(",", data.IP_DestinationAddress);
+            ls.IP_SourceAddress = string.Join(",", data.IP_SourceAddress);
+            ls.TCP_DestinationPort = data.TCP_DestinationPort;
+            ls.TCP_SourcePort = data.TCP_SourcePort;
+            ls.Message = message;
+            ls.isreqres = reqres;
+            
+
+            if (message!="")
+            {
+                string[] a = message.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.None);
+                ls.Content = a[1];
+            }
+            
+
+
+
+            return ls;
 
         }
-        private void CreateHttpFromTCP(List<PacketData> Packist) 
+        #region dropped source
+        private void CreateHttpFromStringbuffer(string buffer)
+        {
+            List<string> strlist = new List<string>();
+            StringBuilder httpbuffer = new StringBuilder("");
+            int length = -1;
+            string[] strArray = buffer.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+
+            for (int i = 0; i < strArray.Length; i++)
+            {
+                httpbuffer.Append(strArray[i]);
+
+                if (strArray[i].ToString().Contains("Content-Length: "))
+                {
+                    length = httplength(strArray[i]);
+                }
+                else if (httpbuffer.ToString().StartsWith("GET") &&
+                          httpbuffer.ToString().Contains("HTTP/") &&
+                          strArray[i] == "")
+                {
+                    strlist.Add(httpbuffer.ToString().Clone() as string);
+                }
+                else if (httpbuffer.ToString().StartsWith("POST") && httpbuffer.ToString().Contains("HTTP/")
+                   && httpbuffer.ToString().Contains("\r\n") && httpbuffer.ToString().Contains("Content-Length: ")
+                   && length != -1)
+                {
+                    string[] a = strArray[i].Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                    string str = httpbuffer.ToString();
+                    str.Replace(a[1], "");
+                    strlist.Add(str.Clone() as string);
+                    httpbuffer.Clear();
+                    httpbuffer.Append(a[0]);
+                    length = -1;
+                }
+                else if (httpbuffer.ToString().StartsWith("HTTP/")
+                    && httpbuffer.ToString().Contains("\r\n") && httpbuffer.ToString().Contains("Content-Length: ")
+                    && length != -1)
+                {
+                    string[] a = strArray[i].Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                    string str = httpbuffer.ToString();
+                    str.Replace(a[1], "");
+                    strlist.Add(str.Clone() as string);
+                    httpbuffer.Clear();
+                    httpbuffer.Append(a[0]);
+                    length = -1;
+                }
+
+            }
+        }
+
+
+        private int httplength(string str)
+        {
+            string c = "Content-Length: ";
+            char[] charArray = c.ToCharArray();
+
+            return int.Parse(str.Remove(0, 16));
+        }
+
+
+
+        private void CreateHttpFromTCP(List<PacketData> Packist)
         {
             Http http = null;
             int TCP_DestinationPort = -1;
 
             for (int i = 0; i < Packist.Count; i++)
             {
-                
+
                 PacketData data = Packist[i];
-                
+
 
 
                 if (data.TCP_DestinationPort != 80)
@@ -166,9 +289,9 @@ namespace DX.ViewModels
                     TCP_DestinationPort = 80;
                 }
 
-                if (TCP_DestinationPort!= data.TCP_DestinationPort)
+                if (TCP_DestinationPort != data.TCP_DestinationPort)
                 {
-                   
+
                     Http httpadd = new Http();
 
                     httpadd.http = http.http;
@@ -204,12 +327,14 @@ namespace DX.ViewModels
 
 
             }
-                
-            
+
+
         }
+        #endregion
 
 
-        
+
+
 
 
 

@@ -35,6 +35,9 @@ namespace DX.Common
             return value;
         }
 
+
+
+
         public static int bytes2ToInt(byte high, byte low)
         {
             int value;

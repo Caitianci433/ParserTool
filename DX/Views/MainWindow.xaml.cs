@@ -33,8 +33,11 @@ namespace DX.Views
 
 
         }
-        
 
-        
+        private void ListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            (this.DataContext as MainWindowViewModel).TextMessage  = (ListView.SelectedItem as ListView_Model).Message;
+            (this.DataContext as MainWindowViewModel).HttpContent = (ListView.SelectedItem as ListView_Model).Content;
+        }
     }
 }
