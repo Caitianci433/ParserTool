@@ -3,28 +3,28 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="500" Width="900">
+        Title="PcapngParser" Height="500" Width="900">
 
-    <Grid>
+    <Grid >
         <Grid.RowDefinitions/>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="5"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ListView x:Name="ListView" ItemsSource="{Binding Path=TcpPackets}" Grid.Row="0" Grid.Column="0" SelectionChanged="ListView_SelectionChanged">
+        <ListView x:Name="ListView" ItemsSource="{Binding Path=TcpPackets}" Grid.Row="0" Grid.Column="0" SelectionChanged="ListView_SelectionChanged" 
+                   >
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="NO." Width="75" DisplayMemberBinding="{Binding Path=ID}"/>
-                    <GridViewColumn Header="源端口" Width="75" DisplayMemberBinding="{Binding Path=TCP_SourcePort}"/>
-                    <GridViewColumn Header="目的端口" Width="75" DisplayMemberBinding="{Binding Path=TCP_DestinationPort}"/>
-                    <GridViewColumn Header="源地址" Width="75" DisplayMemberBinding="{Binding Path=IP_SourceAddress}"/>
-                    <GridViewColumn Header="目的地址" Width="75" DisplayMemberBinding="{Binding Path=IP_DestinationAddress}"/>
+                    <GridViewColumn Header="NO." Width="30" DisplayMemberBinding="{Binding Path=ID}"/>
+                    <GridViewColumn Header="Time" Width="50" DisplayMemberBinding="{Binding Path=Time}"/>
+                    <GridViewColumn Header="SourcePort" Width="50" DisplayMemberBinding="{Binding Path=TCP_SourcePort}"/>
+                    <GridViewColumn Header="DestinationPort" Width="50" DisplayMemberBinding="{Binding Path=TCP_DestinationPort}"/>
+                    <GridViewColumn Header="SourceAddress" Width="75" DisplayMemberBinding="{Binding Path=IP_SourceAddress}"/>
+                    <GridViewColumn Header="DestinationAddress" Width="75" DisplayMemberBinding="{Binding Path=IP_DestinationAddress}"/>
 
                 </GridView>
             </ListView.View>
-
-
         </ListView>
 
         <GridSplitter Grid.Row="0" Grid.Column="1" Width="10" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Wheat"/>
@@ -39,12 +39,59 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding TextMessage}"/>
+
 
             <GridSplitter Grid.Row="1" Grid.Column="0" Height="10" HorizontalAlignment="Stretch" Background="Wheat"/>
 
-         
+            <TreeView Name="myTreeViewEvent" Grid.Row="0" Grid.Column="0" >
+                <TreeViewItem Header="HTTP HEADER" IsSelected="True" >
+                    <TreeViewItem>
+                        <TreeViewItem.Header >
+                            <DockPanel>
+                                <TextBlock x:Name="header_detail" ></TextBlock>
+                            </DockPanel>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>
 
+
+
+                <TreeViewItem Header="HTTP BODY" IsSelected="True">
+                    <TreeViewItem>
+                        <TreeViewItem.Header >
+                            <DockPanel>
+                                <TextBlock x:Name="body_detail" ></TextBlock>
+                            </DockPanel>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>
+
+                <TreeViewItem Header="HTTP CONTENT" IsSelected="True">
+                    <TreeViewItem>
+                        <TreeViewItem.Header >
+                            <DockPanel>
+                                <TextBlock x:Name="content_detail" ></TextBlock>
+                            </DockPanel>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>
+
+                <TreeViewItem Header="LENGTH" IsSelected="True">
+                    <TreeViewItem>
+                        <TreeViewItem.Header >
+                            <DockPanel>
+                                <TextBlock x:Name="http_length" ></TextBlock>
+                            </DockPanel>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>
+
+            </TreeView>
+
+            <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding TextMessage}" FontFamily="Courier New"/>
         </Grid>
+        
+
     </Grid>
+
 </Window>

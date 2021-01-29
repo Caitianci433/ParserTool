@@ -36,8 +36,47 @@ namespace DX.Views
 
         private void ListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            (this.DataContext as MainWindowViewModel).TextMessage  = (ListView.SelectedItem as ListView_Model).Message;
-            (this.DataContext as MainWindowViewModel).HttpContent = (ListView.SelectedItem as ListView_Model).Content;
+            if (ListView.SelectedItem!=null)
+            {   
+                (this.DataContext as MainWindowViewModel).HttpContent = (ListView.SelectedItem as ListView_Model).Content;
+
+                this.header_detail.Text = (ListView.SelectedItem as ListView_Model).Head;
+                this.body_detail.Text = (ListView.SelectedItem as ListView_Model).Body;
+                this.content_detail.Text = (ListView.SelectedItem as ListView_Model).Content;
+                this.http_length.Text = "length:"+(ListView.SelectedItem as ListView_Model).Content.Length+"";
+
+                byte[] byteArray = System.Text.Encoding.Default.GetBytes((ListView.SelectedItem as ListView_Model).Content);
+
+                StringBuilder str = new StringBuilder();
+                str.Append("ADRESS    |00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\r\n");
+                str.Append("\r\n");
+                for (int i = 0,j = 0,k = 0,l = 0; i < byteArray.Length; i++,k++)
+                {
+                    if (k%16==0)
+                    {
+                        str.Append(l.ToString("X8"));
+                        str.Append("  |");
+                        l += 1;
+                    }
+                    str.Append(byteArray[i].ToString("X2"));
+                    str.Append(" ");
+                    j += 1;
+                    if (j==16)
+                    {
+                        str.Append("\r\n");
+                        j = 0;
+                    }
+                }
+
+                (this.DataContext as MainWindowViewModel).TextMessage = str.ToString();
+
+            }
+            
+        }
+
+        private void Sort_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }

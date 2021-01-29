@@ -91,8 +91,12 @@ namespace DX.Models
 
 			if (PacketData.Length>54)
             {
+                
+					HTTP = Encoding.ASCII.GetString(Tools.GetPartialBytes(PacketData, 54, Tools.bytes2ToInt(PacketData[16], PacketData[17]) - 40));
+				
+                
 				// int x = Tools.bytes2ToInt(PacketData[16], PacketData[17]) - 40;
-				HTTP = Encoding.ASCII.GetString(Tools.GetPartialBytes(PacketData, 54, Tools.bytes2ToInt(PacketData[16], PacketData[17]) - 40));
+				
             }
             else
             {
