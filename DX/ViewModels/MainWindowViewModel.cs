@@ -12,6 +12,15 @@ namespace DX.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
+        private List<ListView_Model> HttpList = new List<ListView_Model>();
+        Dictionary<int, List<PacketData>> HttpMap = new Dictionary<int, List<PacketData>>();
+
+
+        public MainWindowViewModel()
+        {
+            
+        }
+
         private string _text = "";
         public string TextMessage
         {
@@ -19,12 +28,6 @@ namespace DX.ViewModels
             set { SetProperty(ref _text, value); }
         }
 
-        private string _httpContent = "";
-        public string HttpContent
-        {
-            get { return _httpContent; }
-            set { SetProperty(ref _httpContent, value); }
-        }
 
         private List<ListView_Model> _tcppackets = new List<ListView_Model>();
         public  List<ListView_Model> TcpPackets
@@ -33,24 +36,27 @@ namespace DX.ViewModels
             set { SetProperty(ref _tcppackets, value); }
         }
 
-        public MainWindowViewModel()
-        {
-
-        }
-
         public void Grid_DragEnter(object sender, DragEventArgs e)
         {
             string fileName = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
             if (!fileName.EndsWith(".pcapng"))
             {
-                MessageBox.Show("error file!");
+                MessageBox.Show("Can not Parser this file!");
                 return;
             }
 
             TcpPackets.Clear();
-
+            try
+            {
+                HttpList.Clear();
                 InitData(fileName);
-
+                TcpPackets = HttpList;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Parser file ERROR!");
+                return;
+            }
         }
 
         
@@ -121,7 +127,7 @@ namespace DX.ViewModels
                 }
             }
 
-            TcpPackets = HttpFromPacketData(mp);
+            HttpList = HttpFromPacketData(mp);
         }
 
         private List<ListView_Model> HttpFromPacketData(Dictionary<int, List<PacketData>> mp ) 
@@ -155,7 +161,7 @@ namespace DX.ViewModels
 
                 foreach (var item in listViewModel)
                 {
-                        listViewModelforView.Add(item);
+                    listViewModelforView.Add(item);
                 }
             }
             return listViewModelforView;
@@ -172,16 +178,23 @@ namespace DX.ViewModels
             ls.TCP_DestinationPort = data.TCP_DestinationPort;
             ls.TCP_SourcePort = data.TCP_SourcePort;
             ls.Time = data.Time;
-
-            if (message!="")
-            {
-                string[] a = message.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.None);
-                ls.Content = a[1];
-                string[] b = message.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-                ls.Head = b[0];
-                ls.Body = a[0].Replace(b[0] + "\r\n", "");
-            }
             
+            string[] a = message.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.None);
+            ls.Content = a[1];
+            string[] b = message.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            ls.Head = b[0];
+            ls.Body = a[0].Replace(b[0] + "\r\n", "");
+
+            ls.ContentLength = ls.Content.Length;
+
+            if (data.TCP_DestinationPort == 80)
+            {
+                ls.PLC_PC = data.TCP_SourcePort + "--------->"+ data.TCP_DestinationPort;
+            }
+            else
+            {
+                ls.PLC_PC = data.TCP_DestinationPort + "<---------" + data.TCP_SourcePort;
+            }
             return ls;
 
         }
@@ -199,6 +212,6 @@ namespace DX.ViewModels
         }
 
 
-        
+
     }
 }

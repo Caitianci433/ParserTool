@@ -31,19 +31,22 @@ namespace DX.Views
                 mainWindowViewModel.Grid_Drop(s, e);
             };
 
-
+            
         }
 
         private void ListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (ListView.SelectedItem!=null)
-            {   
-                (this.DataContext as MainWindowViewModel).HttpContent = (ListView.SelectedItem as ListView_Model).Content;
+            {
+
+                
 
                 this.header_detail.Text = (ListView.SelectedItem as ListView_Model).Head;
                 this.body_detail.Text = (ListView.SelectedItem as ListView_Model).Body;
                 this.content_detail.Text = (ListView.SelectedItem as ListView_Model).Content;
-                this.http_length.Text = "length:"+(ListView.SelectedItem as ListView_Model).Content.Length+"";
+
+                this.endtext.Text = "IP: FROM "+ (ListView.SelectedItem as ListView_Model).IP_SourceAddress + ":"+(ListView.SelectedItem as ListView_Model).TCP_SourcePort
+                                   + "     ------->     TO " + (ListView.SelectedItem as ListView_Model).IP_DestinationAddress+":" + (ListView.SelectedItem as ListView_Model).TCP_DestinationPort;
 
                 byte[] byteArray = System.Text.Encoding.Default.GetBytes((ListView.SelectedItem as ListView_Model).Content);
 
@@ -74,9 +77,11 @@ namespace DX.Views
             
         }
 
-        private void Sort_Click(object sender, RoutedEventArgs e)
+      
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            
+            MessageBox.Show("Pcapng Parser\r\nVerson 0.1\r\nAuthor: caitianci@hyron.com");
         }
     }
 }

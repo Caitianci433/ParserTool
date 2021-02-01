@@ -4,94 +4,134 @@
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="PcapngParser" Height="500" Width="900">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition ></RowDefinition>
+            <RowDefinition Height="15"></RowDefinition>
+        </Grid.RowDefinitions>
 
-    <Grid >
-        <Grid.RowDefinitions/>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="5"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <ListView x:Name="ListView" ItemsSource="{Binding Path=TcpPackets}" Grid.Row="0" Grid.Column="0" SelectionChanged="ListView_SelectionChanged" 
-                   >
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="NO." Width="30" DisplayMemberBinding="{Binding Path=ID}"/>
-                    <GridViewColumn Header="Time" Width="50" DisplayMemberBinding="{Binding Path=Time}"/>
-                    <GridViewColumn Header="SourcePort" Width="50" DisplayMemberBinding="{Binding Path=TCP_SourcePort}"/>
-                    <GridViewColumn Header="DestinationPort" Width="50" DisplayMemberBinding="{Binding Path=TCP_DestinationPort}"/>
-                    <GridViewColumn Header="SourceAddress" Width="75" DisplayMemberBinding="{Binding Path=IP_SourceAddress}"/>
-                    <GridViewColumn Header="DestinationAddress" Width="75" DisplayMemberBinding="{Binding Path=IP_DestinationAddress}"/>
-
-                </GridView>
-            </ListView.View>
-        </ListView>
-
-        <GridSplitter Grid.Row="0" Grid.Column="1" Width="10" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Wheat"/>
-
-        <Grid Grid.Row="0" Grid.Column="2">
+        <Menu FontFamily="ＭＳ Ｐゴシック" FontSize="14">
+            <MenuItem Header="ファイル">
+                <MenuItem Header="開く..."></MenuItem>
+            </MenuItem>
+            <MenuItem Header="ヘルプ">
+                <MenuItem Header="バージョン" Click="MenuItem_Click"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <TextBlock x:Name="endtext" Grid.Row="2"></TextBlock>
+        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="5"/>
-                <RowDefinition/>
+                <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
+
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2.5"/>
+                <ColumnDefinition Width="6*"/>
             </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                    <TextBlock Text=" Fliter Port  " VerticalAlignment="Center"></TextBlock>
+                    <ComboBox  Width="50">
+                        <ComboBoxItem>all</ComboBoxItem>
+                        <ComboBoxItem>1</ComboBoxItem>
+                        <ComboBoxItem>2</ComboBoxItem>
+                        <ComboBoxItem>3</ComboBoxItem>
+                    </ComboBox>
+                    <TextBlock Text=" PLC or PC   " VerticalAlignment="Center"></TextBlock>
+                    <ComboBox  Width="50">
+                        <ComboBoxItem>PLC</ComboBoxItem>
+                        <ComboBoxItem>PC</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+                
+                
+                <ListView x:Name="ListView" ItemsSource="{Binding Path=TcpPackets}" Grid.Row="1" Grid.Column="0" SelectionChanged="ListView_SelectionChanged" >
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding Path=ID}" >
+                                <GridViewColumnHeader >
+                                    <TextBlock  x:Name="no" Text= "↑NO."/>
+                                </GridViewColumnHeader>
+                            </GridViewColumn>
 
+                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding Path=Time}">
+                                <GridViewColumnHeader >
+                                    <TextBlock  x:Name="time" Text= "↑Time"/>
+                                </GridViewColumnHeader>
+                            </GridViewColumn>
 
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=PLC_PC}">
+                                <GridViewColumnHeader >
+                                    <StackPanel Width="80" HorizontalAlignment="Center" >
+                                        <TextBlock  x:Name="plc_pc" Text= "PC-----PLC" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </GridViewColumnHeader>
+                            </GridViewColumn>
 
-            <GridSplitter Grid.Row="1" Grid.Column="0" Height="10" HorizontalAlignment="Stretch" Background="Wheat"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=ContentLength}" Width="50">
+                                <GridViewColumnHeader >
+                                    <TextBlock  x:Name="length" Text= "Length" HorizontalAlignment="Center"/>
+                                </GridViewColumnHeader>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+            
 
-            <TreeView Name="myTreeViewEvent" Grid.Row="0" Grid.Column="0" >
-                <TreeViewItem Header="HTTP HEADER" IsSelected="True" >
-                    <TreeViewItem>
-                        <TreeViewItem.Header >
-                            <DockPanel>
-                                <TextBlock x:Name="header_detail" ></TextBlock>
-                            </DockPanel>
-                        </TreeViewItem.Header>
+            <GridSplitter Grid.Row="0" Grid.Column="1" Width="10" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Wheat"/>
+
+            <Grid Grid.Row="0" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="2.5"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <TreeView Name="myTreeViewEvent" Grid.Row="0" Grid.Column="0" >
+                    <TreeViewItem Header="HTTP HEADER" IsSelected="True" >
+                        <TreeViewItem>
+                            <TreeViewItem.Header >
+                                <DockPanel>
+                                    <TextBlock x:Name="header_detail" ></TextBlock>
+                                </DockPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
                     </TreeViewItem>
-                </TreeViewItem>
 
-
-
-                <TreeViewItem Header="HTTP BODY" IsSelected="True">
-                    <TreeViewItem>
-                        <TreeViewItem.Header >
-                            <DockPanel>
-                                <TextBlock x:Name="body_detail" ></TextBlock>
-                            </DockPanel>
-                        </TreeViewItem.Header>
+                    <TreeViewItem Header="HTTP BODY" IsSelected="True">
+                        <TreeViewItem>
+                            <TreeViewItem.Header >
+                                <DockPanel>
+                                    <TextBlock x:Name="body_detail" ></TextBlock>
+                                </DockPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
                     </TreeViewItem>
-                </TreeViewItem>
 
-                <TreeViewItem Header="HTTP CONTENT" IsSelected="True">
-                    <TreeViewItem>
-                        <TreeViewItem.Header >
-                            <DockPanel>
-                                <TextBlock x:Name="content_detail" ></TextBlock>
-                            </DockPanel>
-                        </TreeViewItem.Header>
+                    <TreeViewItem Header="HTTP CONTENT" IsSelected="True">
+                        <TreeViewItem>
+                            <TreeViewItem.Header >
+                                <DockPanel>
+                                    <TextBlock x:Name="content_detail" ></TextBlock>
+                                </DockPanel>
+                            </TreeViewItem.Header>
+                        </TreeViewItem>
                     </TreeViewItem>
-                </TreeViewItem>
 
-                <TreeViewItem Header="LENGTH" IsSelected="True">
-                    <TreeViewItem>
-                        <TreeViewItem.Header >
-                            <DockPanel>
-                                <TextBlock x:Name="http_length" ></TextBlock>
-                            </DockPanel>
-                        </TreeViewItem.Header>
-                    </TreeViewItem>
-                </TreeViewItem>
-
-            </TreeView>
-
-            <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding TextMessage}" FontFamily="Courier New"/>
+                </TreeView>
+                <GridSplitter Grid.Row="1" Grid.Column="0" Height="10" HorizontalAlignment="Stretch" Background="Wheat"/>
+                <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding TextMessage}" FontSize="12" FontFamily="Courier New"/>
+            </Grid>
         </Grid>
-        
-
     </Grid>
-
 </Window>
