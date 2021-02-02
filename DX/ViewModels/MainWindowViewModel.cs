@@ -190,10 +190,12 @@ namespace DX.ViewModels
             if (data.TCP_DestinationPort == 80)
             {
                 ls.PLC_PC = data.TCP_SourcePort + "--------->"+ data.TCP_DestinationPort;
+                ls.Kind = "リクエスト";
             }
             else
             {
                 ls.PLC_PC = data.TCP_DestinationPort + "<---------" + data.TCP_SourcePort;
+                ls.Kind = "レスポンス";
             }
             return ls;
 

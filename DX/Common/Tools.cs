@@ -35,6 +35,21 @@ namespace DX.Common
             return value;
         }
 
+        public static ulong bytesToUlong(byte[] src, int offset)
+        {
+            ulong value;
+            value = (ulong)((src[offset] & 0xFF << 32)
+                    | ((src[offset + 1] & 0xFF) << 40)
+                    | ((src[offset + 2] & 0xFF) << 48)
+                    | ((src[offset + 3] & 0xFF) << 56)
+                    | ((src[offset + 4] & 0xFF))
+                    | ((src[offset + 5] & 0xFF) << 8)
+                    | ((src[offset + 6] & 0xFF) << 16)
+                    | ((src[offset + 7] & 0xFF) << 24)
+                    );
+            return value;
+        }
+
 
 
 

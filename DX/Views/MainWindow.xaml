@@ -15,11 +15,17 @@
             <MenuItem Header="ファイル">
                 <MenuItem Header="開く..."></MenuItem>
             </MenuItem>
+            <MenuItem Header="参照">
+                <MenuItem Header="ダンロードアップロード" Click="MenuItem_Click"></MenuItem>
+            </MenuItem>
             <MenuItem Header="ヘルプ">
                 <MenuItem Header="バージョン" Click="MenuItem_Click"></MenuItem>
             </MenuItem>
+            
         </Menu>
-        <TextBlock x:Name="endtext" Grid.Row="2"></TextBlock>
+        <TextBlock x:Name="endtext" Grid.Row="2"><InlineUIContainer>
+                
+            </InlineUIContainer></TextBlock>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
@@ -43,11 +49,13 @@
                         <ComboBoxItem>2</ComboBoxItem>
                         <ComboBoxItem>3</ComboBoxItem>
                     </ComboBox>
-                    <TextBlock Text=" PLC or PC   " VerticalAlignment="Center"></TextBlock>
-                    <ComboBox  Width="50">
-                        <ComboBoxItem>PLC</ComboBoxItem>
-                        <ComboBoxItem>PC</ComboBoxItem>
-                    </ComboBox>
+                    <Separator Width="10"></Separator>
+                    <Button>分析開始</Button>
+                    <Separator Width="10"></Separator>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">分析結果</TextBlock>
+                    <Separator Width="10"></Separator>
+                    <Rectangle Fill="Yellow"   Stroke="Yellow"  Width="25" HorizontalAlignment="Right"/>
+                    <Separator Width="10"></Separator>
                 </StackPanel>
                 
                 
@@ -56,20 +64,28 @@
                         <GridView>
                             <GridViewColumn Width="50" DisplayMemberBinding="{Binding Path=ID}" >
                                 <GridViewColumnHeader >
-                                    <TextBlock  x:Name="no" Text= "↑NO."/>
+                                    <TextBlock  x:Name="no" Text= "NO."/>
                                 </GridViewColumnHeader>
                             </GridViewColumn>
 
                             <GridViewColumn Width="50" DisplayMemberBinding="{Binding Path=Time}">
                                 <GridViewColumnHeader >
-                                    <TextBlock  x:Name="time" Text= "↑Time"/>
+                                    <TextBlock  x:Name="time" Text= "Time"/>
                                 </GridViewColumnHeader>
                             </GridViewColumn>
 
                             <GridViewColumn DisplayMemberBinding="{Binding Path=PLC_PC}">
                                 <GridViewColumnHeader >
                                     <StackPanel Width="80" HorizontalAlignment="Center" >
-                                        <TextBlock  x:Name="plc_pc" Text= "PC-----PLC" HorizontalAlignment="Center"/>
+                                        <TextBlock  x:Name="plc_pc" Text= "SS-----PLC" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </GridViewColumnHeader>
+                            </GridViewColumn>
+
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Kind}" Width="75">
+                                <GridViewColumnHeader >
+                                    <StackPanel Width="75" HorizontalAlignment="Center" >
+                                        <TextBlock  x:Name="req_or_res" Text= "CMD/RES" HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </GridViewColumnHeader>
                             </GridViewColumn>
@@ -82,6 +98,7 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
+                
             </Grid>
             
 
@@ -96,41 +113,60 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
+                <TabControl Grid.Row="0" Grid.Column="0">
+                    <TabItem Header="HTTP DETAIL">
+                        <TreeView Name="myTreeViewEvent" Grid.Row="0" Grid.Column="0" >
+                            <TreeViewItem Header="HTTP HEADER" IsSelected="True" >
+                                <TreeViewItem>
+                                    <TreeViewItem.Header >
+                                        <DockPanel>
+                                            <TextBox x:Name="header_detail" ></TextBox>
+                                        </DockPanel>
+                                    </TreeViewItem.Header>
+                                </TreeViewItem>
+                            </TreeViewItem>
 
-                <TreeView Name="myTreeViewEvent" Grid.Row="0" Grid.Column="0" >
-                    <TreeViewItem Header="HTTP HEADER" IsSelected="True" >
-                        <TreeViewItem>
-                            <TreeViewItem.Header >
-                                <DockPanel>
-                                    <TextBlock x:Name="header_detail" ></TextBlock>
-                                </DockPanel>
-                            </TreeViewItem.Header>
-                        </TreeViewItem>
-                    </TreeViewItem>
-
-                    <TreeViewItem Header="HTTP BODY" IsSelected="True">
-                        <TreeViewItem>
-                            <TreeViewItem.Header >
-                                <DockPanel>
-                                    <TextBlock x:Name="body_detail" ></TextBlock>
-                                </DockPanel>
-                            </TreeViewItem.Header>
-                        </TreeViewItem>
-                    </TreeViewItem>
-
-                    <TreeViewItem Header="HTTP CONTENT" IsSelected="True">
-                        <TreeViewItem>
-                            <TreeViewItem.Header >
-                                <DockPanel>
-                                    <TextBlock x:Name="content_detail" ></TextBlock>
-                                </DockPanel>
-                            </TreeViewItem.Header>
-                        </TreeViewItem>
-                    </TreeViewItem>
-
-                </TreeView>
+                            <TreeViewItem Header="HTTP BODY" IsSelected="True">
+                                <TreeViewItem>
+                                    <TreeViewItem.Header >
+                                        <DockPanel>
+                                            <TextBox x:Name="body_detail" ></TextBox>
+                                        </DockPanel>
+                                    </TreeViewItem.Header>
+                                </TreeViewItem>
+                            </TreeViewItem>
+                            <Separator></Separator>
+                            <TreeViewItem Header="HTTP CONTENT" IsSelected="True">
+                                <TreeViewItem>
+                                    <TreeViewItem.Header >
+                                        <DockPanel>
+                                            <TextBox x:Name="content_detail" ></TextBox>
+                                        </DockPanel>
+                                    </TreeViewItem.Header>
+                                </TreeViewItem>
+                            </TreeViewItem>
+                            <TreeViewItem Header="推測" IsSelected="True">
+                                <TreeViewItem>
+                                    <TreeViewItem.Header >
+                                        <DockPanel>
+                                            <TextBlock x:Name="detail" >問題なし</TextBlock>
+                                        </DockPanel>
+                                    </TreeViewItem.Header>
+                                </TreeViewItem>
+                            </TreeViewItem>
+                        </TreeView>
+                    </TabItem>
+                    <TabItem Header="ERROR CODE DETAIL">
+                        
+                    </TabItem>
+                </TabControl>
+               
+                
                 <GridSplitter Grid.Row="1" Grid.Column="0" Height="10" HorizontalAlignment="Stretch" Background="Wheat"/>
+                
                 <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding TextMessage}" FontSize="12" FontFamily="Courier New"/>
+                
+
             </Grid>
         </Grid>
     </Grid>

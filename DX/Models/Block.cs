@@ -39,18 +39,21 @@ namespace DX.Models
 
 		public byte[] PacketData;
 
-		public long Time;
+		public ulong Time;
 
 
 		public BlockBody(byte[] BlockBody)
 		{
 			InterfaceID = Tools.bytesToInt(BlockBody, 0);
+
+			Time = BitConverter.ToUInt64(BlockBody, 4);
+			ulong time = Tools.bytesToUlong(BlockBody,4);
 			Timestamp_High = Tools.bytesToInt(BlockBody, 4);
 			Timestamp_Low = Tools.bytesToInt(BlockBody, 8);
 
 			CapturedLen = Tools.bytesToInt(BlockBody, 12);
 			PacketLen = BitConverter.ToInt32(BlockBody, 16);
-			Time = BitConverter.ToInt64(BlockBody,4);
+			
 
 			PacketData = Tools.GetPartialBytes(BlockBody, 20, CapturedLen);
 		}
@@ -65,7 +68,7 @@ namespace DX.Models
 		public int TCP_SourcePort { get; set; }
 		public int TCP_DestinationPort { get; set; }
 		public string HTTP { get; set; }
-		public long Time { get; set; }
+		public ulong Time { get; set; }
 
 
 		public PacketData(byte[] PacketData) 
