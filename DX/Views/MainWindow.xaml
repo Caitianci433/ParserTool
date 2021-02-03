@@ -51,11 +51,13 @@
                         <ComboBoxItem>3</ComboBoxItem>
                     </ComboBox>
                     <Separator Width="10" Background="White"></Separator>
+                    <Button Click="Button_Click">SORT</Button>
+                    <Separator Width="10" Background="White"></Separator>
                     <Button>分析開始</Button>
-                    <Separator Width="70" Background="White"></Separator>
+                    <Separator Width="30" Background="White"></Separator>
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">分析結果</TextBlock>
                     <Separator Width="10" Background="White"></Separator>
-                    <Rectangle Fill="Yellow"   Stroke="Yellow"  Width="30" HorizontalAlignment="Right"/>
+                    <Rectangle Fill="Green"   Stroke="Yellow"  Width="30" HorizontalAlignment="Right"/>
                     <Separator Width="10" Background="White"></Separator>
                 </StackPanel>
                 
@@ -69,7 +71,7 @@
                                 </GridViewColumnHeader>
                             </GridViewColumn>
 
-                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding Path=Time}">
+                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding Path=Datetime}">
                                 <GridViewColumnHeader >
                                     <TextBlock  x:Name="time" Text= "Time"/>
                                 </GridViewColumnHeader>
@@ -114,9 +116,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <TabControl Grid.Row="0" Grid.Column="0">
-                    <TabItem Header="HTTP DETAIL">
-                        <TreeView Name="myTreeViewEvent" Grid.Row="0" Grid.Column="0" >
+                <TreeView Name="myTreeViewEvent" Grid.Row="0" Grid.Column="0" >
                             <TreeViewItem Header="HTTP HEADER" IsSelected="True" >
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
@@ -136,7 +136,7 @@
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
                             </TreeViewItem>
-                            <Separator></Separator>
+
                             <TreeViewItem Header="HTTP CONTENT" IsSelected="True">
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
@@ -146,7 +146,7 @@
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
                             </TreeViewItem>
-                            <TreeViewItem Header="推測" IsSelected="True">
+                            <TreeViewItem Header="予想結果" IsSelected="True">
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
                                         <DockPanel>
@@ -156,17 +156,14 @@
                                 </TreeViewItem>
                             </TreeViewItem>
                         </TreeView>
-                    </TabItem>
-                    <TabItem Header="ERROR CODE DETAIL">
-                        
-                    </TabItem>
-                </TabControl>
+
                
                 
                 <GridSplitter Grid.Row="1" Grid.Column="0" Height="10" HorizontalAlignment="Stretch" Background="Wheat"/>
                 
-                <TextBox Grid.Row="2" Grid.Column="0" Text="{Binding TextMessage}" FontSize="12" FontFamily="Courier New"/>
+                <TextBox x:Name="byte_detail" Grid.Row="2" Grid.Column="0" Text="{Binding TextMessage}" FontSize="12" FontFamily="Courier New"/>
                 
+
 
             </Grid>
         </Grid>

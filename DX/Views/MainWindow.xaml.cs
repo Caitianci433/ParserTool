@@ -83,5 +83,11 @@ namespace DX.Views
         {
             MessageBox.Show("Pcapng Parser\r\nVerson 0.1\r\nAuthor: caitianci@hyron.com");
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            (this.DataContext as MainWindowViewModel).HttpList.Sort();
+            (this.DataContext as MainWindowViewModel).TcpPackets = (this.DataContext as MainWindowViewModel).HttpList;
+        }
     }
 }

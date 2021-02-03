@@ -38,20 +38,41 @@ namespace DX.Common
         public static ulong bytesToUlong(byte[] src, int offset)
         {
             ulong value;
-            value = (ulong)((src[offset] & 0xFF << 32)
-                    | ((src[offset + 1] & 0xFF) << 40)
-                    | ((src[offset + 2] & 0xFF) << 48)
-                    | ((src[offset + 3] & 0xFF) << 56)
-                    | ((src[offset + 4] & 0xFF))
-                    | ((src[offset + 5] & 0xFF) << 8)
-                    | ((src[offset + 6] & 0xFF) << 16)
-                    | ((src[offset + 7] & 0xFF) << 24)
-                    );
+
+             value = (ulong)(((src[offset] & 0xffuL) << 32)
+                    | ((src[offset + 1] & 0xffuL) << 40)
+                    | ((src[offset + 2] & 0xffuL) << 48)
+                    | ((src[offset + 3] & 0xffuL) << 56)
+                    | ((src[offset + 4] & 0xffuL))
+                    | ((src[offset + 5] & 0xffuL) << 8)
+                    | ((src[offset + 6] & 0xffuL) << 16)
+                    | ((src[offset + 7] & 0xffuL) << 24));
+
             return value;
         }
 
+        public static ulong bytesToUlong2(byte[] src, int offset)
+        {
+            byte[] a3 = new byte[] { src[offset+4], src[offset+5], src[offset+6], src[offset+7], src[offset], src[offset+1], src[offset+2], src[offset+3] };
 
+            return BitConverter.ToUInt64(a3,0);
+        }
 
+        public static ulong bytesToUlong3(byte[] src, int offset)
+        {
+            ulong value;
+
+            var x = ((src[offset] & 0xFFUL) << 32)
+                    | ((src[offset + 1] & 0xFFUL) << 40)
+                    | ((src[offset + 2] & 0xFFUL) << 48)
+                    | ((src[offset + 3] & 0xFFUL) << 56)
+                    | ((src[offset + 4] & 0xFFUL))
+                    | ((src[offset + 5] & 0xFFUL) << 8)
+                    | ((src[offset + 6] & 0xFFUL) << 16)
+                    | ((src[offset + 7] & 0xFFUL) << 24);
+            value = (ulong)x;
+            return value;
+        }
 
         public static int bytes2ToInt(byte high, byte low)
         {

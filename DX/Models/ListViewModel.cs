@@ -15,7 +15,7 @@ namespace DX.Models
         RESPONSE_ERROR
     }
 
-    public class ListView_Model 
+    public class ListView_Model :IComparable
     {
         public ListView_Model() 
         {
@@ -36,7 +36,13 @@ namespace DX.Models
         public string PLC_PC { get; set; }
         public string Kind { get; set; }
 
+        public string Datetime { get; set; }
+
         public ErrorCode ErrorCode { get; set; }
 
+        public int CompareTo(object obj)
+        {
+            return Time.CompareTo((obj as ListView_Model).Time);
+        }
     }
 }

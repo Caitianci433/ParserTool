@@ -8,12 +8,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Linq;
 
 namespace DX.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private List<ListView_Model> HttpList = new List<ListView_Model>();
+        
+        public List<ListView_Model> HttpList = new List<ListView_Model>();
         Dictionary<int, List<PacketData>> HttpMap = new Dictionary<int, List<PacketData>>();
 
 
@@ -166,11 +168,6 @@ namespace DX.ViewModels
                 }
             }
 
-            ParserServer.DispacherPacket(listViewModelforView);
-            ParserServer.ParserCheck();
-            var a = ParserServer.list;
-            var b = ParserServer.mp;
-
             return listViewModelforView;
         }
 
@@ -197,13 +194,14 @@ namespace DX.ViewModels
             if (data.TCP_DestinationPort == 80)
             {
                 ls.PLC_PC = data.TCP_SourcePort + "--------->"+ data.TCP_DestinationPort;
-                ls.Kind = "リクエスト";
+                ls.Kind = "CMD";
             }
             else
             {
                 ls.PLC_PC = data.TCP_DestinationPort + "<---------" + data.TCP_SourcePort;
-                ls.Kind = "レスポンス";
+                ls.Kind = "RES";
             }
+            ls.Datetime = new DateTime(621355968000000000).AddMilliseconds(ls.Time/1000).ToString("yyyy-MM-dd HH:mm:ss.fff");
             return ls;
 
         }

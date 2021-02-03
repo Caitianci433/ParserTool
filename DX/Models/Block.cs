@@ -46,10 +46,7 @@ namespace DX.Models
 		{
 			InterfaceID = Tools.bytesToInt(BlockBody, 0);
 
-			Time = BitConverter.ToUInt64(BlockBody, 4);
-			ulong time = Tools.bytesToUlong(BlockBody,4);
-			Timestamp_High = Tools.bytesToInt(BlockBody, 4);
-			Timestamp_Low = Tools.bytesToInt(BlockBody, 8);
+			Time = Tools.bytesToUlong3(BlockBody, 4);
 
 			CapturedLen = Tools.bytesToInt(BlockBody, 12);
 			PacketLen = BitConverter.ToInt32(BlockBody, 16);
