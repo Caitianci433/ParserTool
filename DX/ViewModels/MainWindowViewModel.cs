@@ -1,5 +1,6 @@
 ﻿using DX.Common;
 using DX.Models;
+using DX.Servers;
 using Prism.Mvvm;
 using System;
 using System.Collections;
@@ -164,6 +165,12 @@ namespace DX.ViewModels
                     listViewModelforView.Add(item);
                 }
             }
+
+            ParserServer.DispacherPacket(listViewModelforView);
+            ParserServer.ParserCheck();
+            var a = ParserServer.list;
+            var b = ParserServer.mp;
+
             return listViewModelforView;
         }
 

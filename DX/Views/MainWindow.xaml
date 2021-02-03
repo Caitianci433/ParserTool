@@ -1,6 +1,7 @@
 ﻿<Window x:Class="DX.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:pu="clr-namespace:Panuon.UI.Silver;assembly=Panuon.UI.Silver"
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="PcapngParser" Height="500" Width="900">
@@ -49,13 +50,13 @@
                         <ComboBoxItem>2</ComboBoxItem>
                         <ComboBoxItem>3</ComboBoxItem>
                     </ComboBox>
-                    <Separator Width="10"></Separator>
+                    <Separator Width="10" Background="White"></Separator>
                     <Button>分析開始</Button>
-                    <Separator Width="10"></Separator>
+                    <Separator Width="70" Background="White"></Separator>
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">分析結果</TextBlock>
-                    <Separator Width="10"></Separator>
-                    <Rectangle Fill="Yellow"   Stroke="Yellow"  Width="25" HorizontalAlignment="Right"/>
-                    <Separator Width="10"></Separator>
+                    <Separator Width="10" Background="White"></Separator>
+                    <Rectangle Fill="Yellow"   Stroke="Yellow"  Width="30" HorizontalAlignment="Right"/>
+                    <Separator Width="10" Background="White"></Separator>
                 </StackPanel>
                 
                 
