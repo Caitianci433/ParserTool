@@ -16,12 +16,19 @@ namespace DX.ViewModels
     {
         
         public List<ListView_Model> HttpList = new List<ListView_Model>();
-        Dictionary<int, List<PacketData>> HttpMap = new Dictionary<int, List<PacketData>>();
+
 
 
         public MainWindowViewModel()
         {
             
+        }
+
+        private List<int> _portlist = new List<int>();
+        public List<int> PortList
+        {
+            get { return _portlist; }
+            set { SetProperty(ref _portlist, value); }
         }
 
         private string _text = "";
@@ -70,7 +77,7 @@ namespace DX.ViewModels
             IEnumerator itor = BlockList.GetEnumerator();
             while (itor.MoveNext())
             {
-                if (Tools.bytesToInt((itor.Current as Block).BlockType, 0) == 6)
+                if (Tools.BytesToInt((itor.Current as Block).BlockType, 0) == 6)
                 {
                     BlockBody blockBody = new BlockBody((itor.Current as Block).BlockBody);
                     if (blockBody.PacketData.Length > 66)
@@ -129,6 +136,12 @@ namespace DX.ViewModels
                     }
                 }
             }
+
+            foreach (var item in mp.Keys)
+            {
+                PortList.Add(item);
+            }
+            
 
             HttpList = HttpFromPacketData(mp);
         }

@@ -3,8 +3,10 @@ using DX.ViewModels;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace DX.Views
 {
@@ -84,10 +86,26 @@ namespace DX.Views
             MessageBox.Show("Pcapng Parser\r\nVerson 0.1\r\nAuthor: caitianci@hyron.com");
         }
 
+        private void OnSearch(object sender, TextChangedEventArgs e)
+        {
+            List<ListView_Model> list = (this.DataContext as MainWindowViewModel).HttpList;
+            ListView.ItemsSource = from iteam in list where iteam.Content.Contains(searchtext.Text) select iteam;
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (combobox.SelectedItem!=null)
+            {
+                int port = (int)combobox.SelectedItem;
+                List<ListView_Model> list = (this.DataContext as MainWindowViewModel).HttpList;
+                ListView.ItemsSource = from iteam in list where (iteam.TCP_DestinationPort == port) || (iteam.TCP_SourcePort == port) select iteam;
+            }
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            (this.DataContext as MainWindowViewModel).HttpList.Sort();
-            (this.DataContext as MainWindowViewModel).TcpPackets = (this.DataContext as MainWindowViewModel).HttpList;
+            combobox.SelectedItem = null;
+            ListView.ItemsSource = (this.DataContext as MainWindowViewModel).HttpList;
         }
     }
 }

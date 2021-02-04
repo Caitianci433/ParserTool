@@ -25,7 +25,7 @@ namespace DX.Common
             return ret;
         }
 
-        public static int bytesToInt(byte[] src, int offset)
+        public static int BytesToInt(byte[] src, int offset)
         {
             int value;
             value = (int)((src[offset] & 0xFF)
@@ -35,7 +35,7 @@ namespace DX.Common
             return value;
         }
 
-        public static ulong bytesToUlong(byte[] src, int offset)
+        public static ulong BytesToUlong(byte[] src, int offset)
         {
             ulong value;
 
@@ -51,14 +51,14 @@ namespace DX.Common
             return value;
         }
 
-        public static ulong bytesToUlong2(byte[] src, int offset)
+        public static ulong BytesToUlong2(byte[] src, int offset)
         {
             byte[] a3 = new byte[] { src[offset+4], src[offset+5], src[offset+6], src[offset+7], src[offset], src[offset+1], src[offset+2], src[offset+3] };
 
             return BitConverter.ToUInt64(a3,0);
         }
 
-        public static ulong bytesToUlong3(byte[] src, int offset)
+        public static ulong BytesToUlong3(byte[] src, int offset)
         {
             ulong value;
 
@@ -74,7 +74,7 @@ namespace DX.Common
             return value;
         }
 
-        public static int bytes2ToInt(byte high, byte low)
+        public static int Bytes2ToInt(byte high, byte low)
         {
             int value;
             value = (int)((low & 0xFF)
@@ -97,7 +97,7 @@ namespace DX.Common
             List<Block> BlockList = new List<Block>();
             for (int i = 0; i < byteArray.Length;)
             {
-                int offset = bytesToInt(byteArray, i + 4);
+                int offset = BytesToInt(byteArray, i + 4);
                 Block block = new Block(GetPartialBytes(byteArray,i,offset));
                 BlockList.Add(block);
                 i += offset;
