@@ -1,0 +1,30 @@
+﻿<Window x:Class="DX.Views.FliterWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"             
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             Title="Fliter" Height="500" Width="200">
+    <Grid>
+        <TreeView Name="FliterTreeView" >
+            <TreeViewItem Header="ERROR" IsSelected="True" >
+                <ListBox  x:Name="listbox" ItemsSource="{Binding Path=TcpPackets}" SelectionChanged="ListBox_SelectionChanged"  >
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=ID}"></TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TreeViewItem>
+
+            <TreeViewItem Header="WARNING" IsSelected="True">
+                <TreeViewItem>
+                    <TreeViewItem.Header >
+                        <DockPanel>
+                            <TextBox x:Name="body_detail" ></TextBox>
+                        </DockPanel>
+                    </TreeViewItem.Header>
+                </TreeViewItem>
+            </TreeViewItem>
+        </TreeView>
+    </Grid>
+</Window>

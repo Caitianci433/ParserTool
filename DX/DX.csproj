@@ -60,6 +60,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Views\FliterWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -71,10 +75,15 @@
     <Compile Include="Common\ButtonBrush.cs" />
     <Compile Include="Common\Tools.cs" />
     <Compile Include="Models\Block.cs" />
-    <Compile Include="Models\ListViewModel.cs" />
+    <Compile Include="Models\Converters.cs" />
+    <Compile Include="Models\HttpModel.cs" />
     <Compile Include="Models\Http.cs" />
     <Compile Include="Servers\ParserServer.cs" />
+    <Compile Include="ViewModels\FliterWindowViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="Views\FliterWindow.xaml.cs">
+      <DependentUpon>FliterWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

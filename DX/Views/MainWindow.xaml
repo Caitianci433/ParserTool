@@ -3,7 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
+        xmlns:local="clr-namespace:DX.Models"
         Title="PcapngParser" Height="500" Width="900">
+    <Window.Resources>
+        <local:IndexConverter x:Key="MyIndexConverter"/>
+        <local:StringToStringLengthConverter x:Key="S2L"/>
+        <local:PortToCMDRESConverter x:Key="P2CS"/>
+        <local:PortToDestinationConverter x:Key="P2D"/>
+        <local:UlongToDateTimeConverter x:Key="L2S"/>
+    </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"></RowDefinition>
@@ -12,14 +20,14 @@
         </Grid.RowDefinitions>
 
         <Menu FontFamily="ＭＳ Ｐゴシック" FontSize="14">
-            <MenuItem Header="ファイル">
-                <MenuItem Header="開く..."></MenuItem>
+            <MenuItem Header="File">
+                <MenuItem Header="Open"></MenuItem>
             </MenuItem>
-            <MenuItem Header="参照">
-                <MenuItem Header="ダンロードアップロード" Click="MenuItem_Click"></MenuItem>
+            <MenuItem Header="Tools">
+                <MenuItem Header="Statistics" Click="Statistics_Click"></MenuItem>
             </MenuItem>
-            <MenuItem Header="ヘルプ">
-                <MenuItem Header="バージョン" Click="MenuItem_Click"></MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="Version" Click="MenuItem_Click"></MenuItem>
             </MenuItem>
             
         </Menu>
@@ -75,30 +83,44 @@
                     <Image Source="/Images/search.jpeg"></Image>
                 </StackPanel>
                 
-                <ListView x:Name="ListView" ItemsSource="{Binding Path=TcpPackets}" Grid.Row="2" Grid.Column="0" SelectionChanged="ListView_SelectionChanged" >
+                <ListView x:Name="ListView"  Grid.Row="2" Grid.Column="0" 
+                          ItemsSource="{Binding Path=TcpPackets}"  SelectedItem="{Binding Path=TcpPacket}"
+                          SelectionChanged="ListView_SelectionChanged" >
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding Path=ID}" >
+                            <GridViewColumn Width="50" DisplayMemberBinding ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}" >
                                 <GridViewColumnHeader >
                                     <TextBlock  x:Name="no" Text= "NO."/>
                                 </GridViewColumnHeader>
                             </GridViewColumn>
 
-                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding Path=Datetime}">
+                            <GridViewColumn Width="50" DisplayMemberBinding="{Binding Path=Time,Converter={StaticResource L2S}}">
                                 <GridViewColumnHeader >
                                     <TextBlock  x:Name="time" Text= "Time"/>
                                 </GridViewColumnHeader>
                             </GridViewColumn>
 
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=PLC_PC}">
+                            <GridViewColumn >
                                 <GridViewColumnHeader >
                                     <StackPanel Width="80" HorizontalAlignment="Center" >
                                         <TextBlock  x:Name="plc_pc" Text= "SS-----PLC" HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </GridViewColumnHeader>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                            <TextBlock.Text>
+                                                <MultiBinding Converter="{StaticResource P2D}">
+                                                    <Binding Path="TCP_SourcePort"/>
+                                                    <Binding Path="TCP_DestinationPort"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
                             </GridViewColumn>
 
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Kind}" Width="75">
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=TCP_DestinationPort,Converter={StaticResource P2CS}}" Width="75">
                                 <GridViewColumnHeader >
                                     <StackPanel Width="75" HorizontalAlignment="Center" >
                                         <TextBlock  x:Name="req_or_res" Text= "CMD/RES" HorizontalAlignment="Center"/>
@@ -106,7 +128,7 @@
                                 </GridViewColumnHeader>
                             </GridViewColumn>
 
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=ContentLength}" Width="50">
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Content,Converter={StaticResource S2L}}" Width="50">
                                 <GridViewColumnHeader >
                                     <TextBlock  x:Name="length" Text= "Length" HorizontalAlignment="Center"/>
                                 </GridViewColumnHeader>
@@ -159,11 +181,11 @@
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
                             </TreeViewItem>
-                            <TreeViewItem Header="予想結果" IsSelected="True">
+                            <TreeViewItem Header="Message" IsSelected="True">
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
                                         <DockPanel>
-                                            <TextBlock x:Name="detail" >問題なし</TextBlock>
+                                            <TextBlock x:Name="detail" >No Problem</TextBlock>
                                         </DockPanel>
                                     </TreeViewItem.Header>
                                 </TreeViewItem>

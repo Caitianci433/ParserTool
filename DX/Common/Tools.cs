@@ -3,12 +3,37 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace DX.Common
 {
     class Tools
     {
+        public static string BytesToShowBytes(byte[] byteArray)
+        {
+            StringBuilder str = new StringBuilder();
+            str.Append("ADRESS    |00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\r\n");
+            str.Append("\r\n");
+            for (int i = 0, j = 0, k = 0, l = 0; i < byteArray.Length; i++, k++)
+            {
+                if (k % 16 == 0)
+                {
+                    str.Append(l.ToString("X8"));
+                    str.Append("  |");
+                    l += 1;
+                }
+                str.Append(byteArray[i].ToString("X2"));
+                str.Append(" ");
+                j += 1;
+                if (j == 16)
+                {
+                    str.Append("\r\n");
+                    j = 0;
+                }
+            }
 
+            return str.ToString();
+        }
         public static byte[] GetPartialBytes(byte[] bytes, int start, int count = -1)
         {
             if (bytes != null && start >= 0 && start < bytes.Length && count < 0)

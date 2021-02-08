@@ -15,7 +15,7 @@ namespace DX.ViewModels
     public class MainWindowViewModel : BindableBase
     {
         
-        public List<ListView_Model> HttpList = new List<ListView_Model>();
+        public List<HttpModel> HttpList = new List<HttpModel>();
 
 
 
@@ -39,11 +39,18 @@ namespace DX.ViewModels
         }
 
 
-        private List<ListView_Model> _tcppackets = new List<ListView_Model>();
-        public  List<ListView_Model> TcpPackets
+        private List<HttpModel> _tcppackets = new List<HttpModel>();
+        public  List<HttpModel> TcpPackets
         {
             get { return _tcppackets; }
             set { SetProperty(ref _tcppackets, value); }
+        }
+
+        private HttpModel _tcppacket;
+        public HttpModel TcpPacket
+        {
+            get { return _tcppacket; }
+            set { SetProperty(ref _tcppacket, value); }
         }
 
         public void Grid_DragEnter(object sender, DragEventArgs e)
@@ -60,6 +67,7 @@ namespace DX.ViewModels
             {
                 HttpList.Clear();
                 InitData(fileName);
+                HttpList.Sort();
                 TcpPackets = HttpList;
             }
             catch (Exception)
@@ -146,22 +154,20 @@ namespace DX.ViewModels
             HttpList = HttpFromPacketData(mp);
         }
 
-        private List<ListView_Model> HttpFromPacketData(Dictionary<int, List<PacketData>> mp ) 
+        private List<HttpModel> HttpFromPacketData(Dictionary<int, List<PacketData>> mp ) 
         {
-            List<ListView_Model> listViewModelforView = new List<ListView_Model>();
-            int no = 0;
+            List<HttpModel> listViewModelforView = new List<HttpModel>();
+
             foreach (var datalist in mp.Values)
             {
                 StringBuilder builder = new StringBuilder("");
-                List<ListView_Model> listViewModel = new List<ListView_Model>();
+                List<HttpModel> listViewModel = new List<HttpModel>();
                 builder.Append(datalist[0].HTTP);
                 for (int i = 1; i < datalist.Count; i++)
                 {
                     if (datalist[i].HTTP.StartsWith("GET") || datalist[i].HTTP.StartsWith("POST") || datalist[i].HTTP.StartsWith("HTTP"))
                     {
-                        //
-                        no += 1;
-                        listViewModel.Add(CreatListViewModel(datalist[i - 1], builder.ToString(), no));
+                        listViewModel.Add(CreatHttpModel(datalist[i - 1], builder.ToString()));
                         builder.Clear();
                     }
 
@@ -170,8 +176,7 @@ namespace DX.ViewModels
                 // buffer flush
                 if (builder.ToString().StartsWith("GET") || builder.ToString().StartsWith("POST") || builder.ToString().StartsWith("HTTP"))
                 {
-                    no += 1;
-                    listViewModel.Add(CreatListViewModel(datalist[datalist.Count - 1], builder.ToString(), no));
+                    listViewModel.Add(CreatHttpModel(datalist[datalist.Count - 1], builder.ToString()));
                     builder.Clear();
                 }
 
@@ -185,11 +190,10 @@ namespace DX.ViewModels
         }
 
 
-        private ListView_Model CreatListViewModel(PacketData data,string message,int no) 
+        private HttpModel CreatHttpModel(PacketData data,string message) 
         {
             
-            ListView_Model ls = new ListView_Model();
-            ls.ID = no;
+            HttpModel ls = new HttpModel();
             ls.IP_DestinationAddress = string.Join(",", data.IP_DestinationAddress);
             ls.IP_SourceAddress = string.Join(",", data.IP_SourceAddress);
             ls.TCP_DestinationPort = data.TCP_DestinationPort;
@@ -201,20 +205,6 @@ namespace DX.ViewModels
             string[] b = message.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             ls.Head = b[0];
             ls.Body = a[0].Replace(b[0] + "\r\n", "");
-
-            ls.ContentLength = ls.Content.Length;
-
-            if (data.TCP_DestinationPort == 80)
-            {
-                ls.PLC_PC = data.TCP_SourcePort + "--------->"+ data.TCP_DestinationPort;
-                ls.Kind = "CMD";
-            }
-            else
-            {
-                ls.PLC_PC = data.TCP_DestinationPort + "<---------" + data.TCP_SourcePort;
-                ls.Kind = "RES";
-            }
-            ls.Datetime = new DateTime(621355968000000000).AddMilliseconds(ls.Time/1000).ToString("yyyy-MM-dd HH:mm:ss.fff");
             return ls;
 
         }

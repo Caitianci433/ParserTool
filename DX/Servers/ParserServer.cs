@@ -10,35 +10,35 @@ namespace DX.Servers
 {
     public class ReqRse 
     { 
-        public ListView_Model req { get; set; }
-        public ListView_Model res { get; set; }
+        public HttpModel req { get; set; }
+        public HttpModel res { get; set; }
     }
     public class ParserServer
     {
         readonly static int timeout = 5;
 
-        public static Dictionary<int, List<ListView_Model>> mp = new Dictionary<int, List<ListView_Model>>();
+        public static Dictionary<int, List<HttpModel>> mp = new Dictionary<int, List<HttpModel>>();
         //req,res
         public static List<ReqRse> list = new List<ReqRse>();
 
-        public static void DispacherPacket(List<ListView_Model> Packist)
+        public static void DispacherPacket(List<HttpModel> Packist)
         {
             IEnumerator itor = Packist.GetEnumerator();
             while (itor.MoveNext())
             {
-                ListView_Model data = itor.Current as ListView_Model;
+                HttpModel data = itor.Current as HttpModel;
                 if (data.TCP_SourcePort == 80)
                 {
                     // res
                     if (!mp.ContainsKey(data.TCP_DestinationPort))
                     {
-                        List<ListView_Model> newlist = new List<ListView_Model>();
+                        List<HttpModel> newlist = new List<HttpModel>();
                         newlist.Add(data);
                         mp.Add(data.TCP_DestinationPort, newlist);
                     }
                     else
                     {
-                        List<ListView_Model> oldlist;
+                        List<HttpModel> oldlist;
                         mp.TryGetValue(data.TCP_DestinationPort, out oldlist);
                         oldlist.Add(data);
                     }
@@ -48,13 +48,13 @@ namespace DX.Servers
                     // req
                     if (!mp.ContainsKey(data.TCP_SourcePort))
                     {
-                        List<ListView_Model> newlist = new List<ListView_Model>(); ;
+                        List<HttpModel> newlist = new List<HttpModel>(); ;
                         newlist.Add(data);
                         mp.Add(data.TCP_SourcePort, newlist);
                     }
                     else
                     {
-                        List<ListView_Model> oldlist;
+                        List<HttpModel> oldlist;
                         mp.TryGetValue(data.TCP_SourcePort, out oldlist);
                         oldlist.Add(data);
                     }
@@ -75,7 +75,7 @@ namespace DX.Servers
             }
 
         }
-        private static void ParserCheckNET(List<ListView_Model> httplist)
+        private static void ParserCheckNET(List<HttpModel> httplist)
         {
 
            for (int i = 0; i < httplist.Count;)
@@ -179,10 +179,7 @@ namespace DX.Servers
                         http.req.Content.Contains("File_endTraceDownload") 
                         )
                     {
-                        if (http.res.ContentLength!=0)
-                        {
-                            http.res.ErrorCode = ErrorCode.RESPONSE_ERROR;
-                        }
+                        
                         
                     }
 

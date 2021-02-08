@@ -15,14 +15,14 @@ namespace DX.Models
         RESPONSE_ERROR
     }
 
-    public class ListView_Model :IComparable
+    public class HttpModel :IComparable
     {
-        public ListView_Model() 
+        public HttpModel() 
         {
             ErrorCode = ErrorCode.NORMAL;
         }
 
-        public int ID { get; set; }
+        
         public string IP_SourceAddress { get; set; }
         public string IP_DestinationAddress { get; set; }
         public int TCP_SourcePort { get; set; }
@@ -32,17 +32,12 @@ namespace DX.Models
         public string Body { get; set; }
         public string Content { get; set; }
 
-        public int ContentLength { get; set; }
-        public string PLC_PC { get; set; }
-        public string Kind { get; set; }
-
-        public string Datetime { get; set; }
 
         public ErrorCode ErrorCode { get; set; }
 
         public int CompareTo(object obj)
         {
-            return Time.CompareTo((obj as ListView_Model).Time);
+            return Time.CompareTo((obj as HttpModel).Time);
         }
     }
 }
