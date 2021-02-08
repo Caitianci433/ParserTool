@@ -11,15 +11,14 @@ namespace DX.ViewModels
     public class FliterWindowViewModel : BindableBase
     {
         
-        public FliterWindowViewModel()
+        public FliterWindowViewModel(MainWindowViewModel dataContext)
         {
-
+            TcpPackets = from iteam in dataContext.HttpList where iteam.Content.Length<15 && iteam.Content.Length>0 select iteam;
         }
 
-        public MainWindow mainwindow { get; set; }
 
-        private List<HttpModel> _tcppackets = new List<HttpModel>();
-        public List<HttpModel> TcpPackets
+        private IEnumerable<HttpModel> _tcppackets;
+        public IEnumerable<HttpModel> TcpPackets
         {
             get { return _tcppackets; }
             set { SetProperty(ref _tcppackets, value); }

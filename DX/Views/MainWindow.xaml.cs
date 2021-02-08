@@ -16,6 +16,7 @@ namespace DX.Views
     /// </summary>
     public partial class MainWindow : Window
     {
+        private FliterWindow fliterWindow=null;
         public MainWindow()
         {
             InitializeComponent();
@@ -36,24 +37,6 @@ namespace DX.Views
 
             
         }
-
-        private void ListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (ListView.SelectedItem!=null)
-            {
-                this.header_detail.Text = (ListView.SelectedItem as HttpModel).Head;
-                this.body_detail.Text = (ListView.SelectedItem as HttpModel).Body;
-                this.content_detail.Text = (ListView.SelectedItem as HttpModel).Content;
-
-                this.endtext.Text = "IP: FROM "+ (ListView.SelectedItem as HttpModel).IP_SourceAddress + ":"+(ListView.SelectedItem as HttpModel).TCP_SourcePort
-                                   + "     ------->     TO " + (ListView.SelectedItem as HttpModel).IP_DestinationAddress+":" + (ListView.SelectedItem as HttpModel).TCP_DestinationPort;
-
-                byte[] byteArray = System.Text.Encoding.Default.GetBytes((ListView.SelectedItem as HttpModel).Content);
-
-                (this.DataContext as MainWindowViewModel).TextMessage = Tools.BytesToShowBytes(byteArray);
-            }
-        }
-
       
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -85,13 +68,22 @@ namespace DX.Views
 
         private void Statistics_Click(object sender, RoutedEventArgs e)
         {
-            FliterWindow fliter = new FliterWindow();
-            FliterWindowViewModel fliterWindowViewModel = new FliterWindowViewModel();
-            fliterWindowViewModel.mainwindow = this;
-            fliterWindowViewModel.TcpPackets = (this.DataContext as MainWindowViewModel).TcpPackets;
-            fliter.DataContext = fliterWindowViewModel;
+            if (fliterWindow==null)
+            {
+                fliterWindow = new FliterWindow(this.DataContext as MainWindowViewModel);
+                fliterWindow.Closed += FliterWindow_Closed;
+                fliterWindow.Show();
+            }
+        }
 
-            fliter.Show();
+        private void FliterWindow_Closed(object sender, System.EventArgs e)
+        {
+            this.fliterWindow = null;
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListView.ScrollIntoView(ListView.SelectedItem);
         }
     }
 }

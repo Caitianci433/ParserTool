@@ -3,27 +3,37 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"             
              prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:local="clr-namespace:DX.Models"
              Title="Fliter" Height="500" Width="200">
+    <Window.Resources>
+        <local:IndexConverter x:Key="MyIndexConverter"/>
+    </Window.Resources>
     <Grid>
         <TreeView Name="FliterTreeView" >
             <TreeViewItem Header="ERROR" IsSelected="True" >
-                <ListBox  x:Name="listbox" ItemsSource="{Binding Path=TcpPackets}" SelectionChanged="ListBox_SelectionChanged"  >
-                    <ListBox.ItemTemplate>
+                <ListView  x:Name="errorlist" ItemsSource="{Binding Path=TcpPackets}" SelectionChanged="errorlist_SelectionChanged"  >
+                    <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=ID}"></TextBlock>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Fill="Red"   Stroke="Black"  Width="20" HorizontalAlignment="Left"/>
+                                <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}"></TextBlock>
+                            </StackPanel>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    </ListView.ItemTemplate>
+                </ListView>
             </TreeViewItem>
 
             <TreeViewItem Header="WARNING" IsSelected="True">
-                <TreeViewItem>
-                    <TreeViewItem.Header >
-                        <DockPanel>
-                            <TextBox x:Name="body_detail" ></TextBox>
-                        </DockPanel>
-                    </TreeViewItem.Header>
-                </TreeViewItem>
+                <ListView  x:Name="warninglist" ItemsSource="{Binding Path=TcpPackets}" SelectionChanged="warninglist_SelectionChanged"  >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Fill="Yellow"   Stroke="Black"  Width="20" HorizontalAlignment="Left"/>
+                                <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}"></TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </TreeViewItem>
         </TreeView>
     </Grid>

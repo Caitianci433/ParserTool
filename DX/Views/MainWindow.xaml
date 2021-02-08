@@ -11,6 +11,8 @@
         <local:PortToCMDRESConverter x:Key="P2CS"/>
         <local:PortToDestinationConverter x:Key="P2D"/>
         <local:UlongToDateTimeConverter x:Key="L2S"/>
+        <local:BytesFormatConverter x:Key="BytesFormat"/>
+        <local:IPConverter x:Key="IP"/>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -32,9 +34,7 @@
             
         </Menu>
         <StackPanel Grid.Row="2" Orientation="Horizontal">
-            
-
-            <TextBlock x:Name="endtext" ></TextBlock>
+            <TextBlock x:Name="endtext" Text="{Binding Path=TcpPacket,Converter={StaticResource IP}}"></TextBlock>
         </StackPanel>
         
         <Grid Grid.Row="1">
@@ -84,8 +84,8 @@
                 </StackPanel>
                 
                 <ListView x:Name="ListView"  Grid.Row="2" Grid.Column="0" 
-                          ItemsSource="{Binding Path=TcpPackets}"  SelectedItem="{Binding Path=TcpPacket}"
-                          SelectionChanged="ListView_SelectionChanged" >
+                          ItemsSource="{Binding Path=TcpPackets}"  SelectedItem="{Binding Path=TcpPacket}" SelectionChanged="ListView_SelectionChanged"
+                           >
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Width="50" DisplayMemberBinding ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}" >
@@ -151,12 +151,12 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <TreeView Name="myTreeViewEvent" Grid.Row="0" Grid.Column="0" >
+                <TreeView Name="myTreeViewEvent" Grid.Row="0" Grid.Column="0" DataContext="{Binding Path=TcpPacket}">
                             <TreeViewItem Header="HTTP HEADER" IsSelected="True" >
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
                                         <DockPanel>
-                                            <TextBox x:Name="header_detail" ></TextBox>
+                                    <TextBox x:Name="header_detail" Text="{Binding Path=Head}"></TextBox>
                                         </DockPanel>
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
@@ -166,7 +166,7 @@
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
                                         <DockPanel>
-                                            <TextBox x:Name="body_detail" ></TextBox>
+                                    <TextBox x:Name="body_detail" Text="{Binding Path=Body}"></TextBox>
                                         </DockPanel>
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
@@ -176,7 +176,7 @@
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
                                         <DockPanel>
-                                            <TextBox x:Name="content_detail" ></TextBox>
+                                    <TextBox x:Name="content_detail" Text="{Binding Path=Content}"></TextBox>
                                         </DockPanel>
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
@@ -195,8 +195,8 @@
                
                 
                 <GridSplitter Grid.Row="1" Grid.Column="0" Height="10" HorizontalAlignment="Stretch" Background="Wheat"/>
-                
-                <TextBox x:Name="byte_detail" Grid.Row="2" Grid.Column="0" Text="{Binding TextMessage}" FontSize="12" FontFamily="Courier New"/>
+
+                <TextBox x:Name="byte_detail" Grid.Row="2" Grid.Column="0" Text="{Binding TcpPacket,Converter={StaticResource BytesFormat}}" FontSize="12" FontFamily="Courier New"/>
                 
 
 

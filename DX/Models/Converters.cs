@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DX.Common;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -101,5 +102,50 @@ namespace DX.Models
         }
     }
 
+    public class BytesFormatConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value!=null)
+            {
+                HttpModel http = value as HttpModel;
+                byte[] byteArray = System.Text.Encoding.Default.GetBytes(http.Content);
+                return Tools.BytesToShowBytes(byteArray);
+            }
+            else
+            {
+                return "";
+            }
+            
+        }
 
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class IPConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null)
+            {
+                HttpModel http = value as HttpModel;
+                string str = "IP: FROM " + http.IP_SourceAddress + ":" + http.TCP_SourcePort
+                                    + "     ------->     TO " + http.IP_DestinationAddress + ":" + http.TCP_DestinationPort;
+                return str;
+            }
+            else
+            {
+                return "";
+            }
+
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
