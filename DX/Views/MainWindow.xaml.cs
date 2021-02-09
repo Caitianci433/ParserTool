@@ -1,5 +1,6 @@
 ﻿using DX.Common;
 using DX.Models;
+using DX.Servers;
 using DX.ViewModels;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -84,6 +85,13 @@ namespace DX.Views
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListView.ScrollIntoView(ListView.SelectedItem);
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            ParserServer.Parser((this.DataContext as MainWindowViewModel).HttpList);
+            (this.DataContext as MainWindowViewModel).HttpList.Sort();
+            ListView.ItemsSource = (this.DataContext as MainWindowViewModel).HttpList;
         }
     }
 }

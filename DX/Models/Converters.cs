@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace DX.Models
 {
@@ -141,6 +142,42 @@ namespace DX.Models
                 return "";
             }
 
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ClourConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            ListViewItem item = (ListViewItem)value;
+            ListView listView =ItemsControl.ItemsControlFromItemContainer(item) as ListView;
+            var obj = listView.ItemContainerGenerator.ItemFromContainer(item);
+
+            ErrorCode errorCode = (obj as HttpModel).ErrorCode;
+            switch (errorCode)
+            {
+                case ErrorCode.NORMAL:
+                    return Brushes.White;
+
+                case ErrorCode.NET_TIMEOUT:
+                    return Brushes.Yellow;
+
+                case ErrorCode.NET_NO_RESPONSE:
+                    return Brushes.Red;
+
+                case ErrorCode.HTTP_ERROR:
+                    return Brushes.Yellow;
+
+                case ErrorCode.RESPONSE_ERROR:
+                    return Brushes.Red;
+                default:
+                    return Brushes.Red;
+            }
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

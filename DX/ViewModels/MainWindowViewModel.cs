@@ -53,29 +53,7 @@ namespace DX.ViewModels
             set { SetProperty(ref _tcppacket, value); }
         }
 
-        public void Grid_DragEnter(object sender, DragEventArgs e)
-        {
-            string fileName = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
-            if (!fileName.EndsWith(".pcapng"))
-            {
-                MessageBox.Show("Can not Parser this file!");
-                return;
-            }
-
-            TcpPackets.Clear();
-            try
-            {
-                HttpList.Clear();
-                InitData(fileName);
-                HttpList.Sort();
-                TcpPackets = HttpList;
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Parser file ERROR!");
-                return;
-            }
-        }
+        
 
         
         private void InitData(string path ) 
@@ -206,7 +184,6 @@ namespace DX.ViewModels
             ls.Head = b[0];
             ls.Body = a[0].Replace(b[0] + "\r\n", "");
             return ls;
-
         }
         public void Grid_Drop(object sender, DragEventArgs e)
         {
@@ -221,7 +198,30 @@ namespace DX.ViewModels
 
         }
 
+        public void Grid_DragEnter(object sender, DragEventArgs e)
+        {
+            string fileName = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            if (!fileName.EndsWith(".pcapng"))
+            {
+                MessageBox.Show("Can not Parser this file!");
+                return;
+            }
 
+            TcpPackets.Clear();
+            try
+            {
+                HttpList.Clear();
+                InitData(fileName);
+
+                HttpList.Sort();
+                TcpPackets = HttpList;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Parser file ERROR!");
+                return;
+            }
+        }
 
     }
 }

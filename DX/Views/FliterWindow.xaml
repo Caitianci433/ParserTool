@@ -4,19 +4,22 @@
              xmlns:prism="http://prismlibrary.com/"             
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:local="clr-namespace:DX.Models"
-             Title="Fliter" Height="500" Width="200">
+             Title="Fliter" Height="400" Width="300" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <local:IndexConverter x:Key="MyIndexConverter"/>
+        <local:UlongToDateTimeConverter x:Key="L2S"/>
     </Window.Resources>
     <Grid>
         <TreeView Name="FliterTreeView" >
             <TreeViewItem Header="ERROR" IsSelected="True" >
-                <ListView  x:Name="errorlist" ItemsSource="{Binding Path=TcpPackets}" SelectionChanged="errorlist_SelectionChanged"  >
+                <ListView  x:Name="errorlist" ItemsSource="{Binding Path=ErrorList}" SelectionChanged="errorlist_SelectionChanged"  >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Rectangle Fill="Red"   Stroke="Black"  Width="20" HorizontalAlignment="Left"/>
                                 <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}"></TextBlock>
+                                <TextBlock Text=" "></TextBlock>
+                                <TextBlock Text="{Binding Path=Time,Converter={StaticResource L2S}}"></TextBlock>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -24,12 +27,14 @@
             </TreeViewItem>
 
             <TreeViewItem Header="WARNING" IsSelected="True">
-                <ListView  x:Name="warninglist" ItemsSource="{Binding Path=TcpPackets}" SelectionChanged="warninglist_SelectionChanged"  >
+                <ListView  x:Name="warninglist" ItemsSource="{Binding Path=WarningList}" SelectionChanged="warninglist_SelectionChanged"  >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Rectangle Fill="Yellow"   Stroke="Black"  Width="20" HorizontalAlignment="Left"/>
                                 <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}"></TextBlock>
+                                <TextBlock Text=" "></TextBlock>
+                                <TextBlock Text="{Binding Path=Time,Converter={StaticResource L2S}}"></TextBlock>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>

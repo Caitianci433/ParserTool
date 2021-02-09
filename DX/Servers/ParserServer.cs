@@ -15,13 +15,20 @@ namespace DX.Servers
     }
     public class ParserServer
     {
-        readonly static int timeout = 5;
+        readonly static int timeout = 3;
 
         public static Dictionary<int, List<HttpModel>> mp = new Dictionary<int, List<HttpModel>>();
         //req,res
         public static List<ReqRse> list = new List<ReqRse>();
 
-        public static void DispacherPacket(List<HttpModel> Packist)
+        public static void Parser(List<HttpModel> https) 
+        {
+            DispacherPacket(https);
+            ParserCheck();
+        }
+
+        
+        private static void DispacherPacket(List<HttpModel> Packist)
         {
             IEnumerator itor = Packist.GetEnumerator();
             while (itor.MoveNext())
@@ -62,7 +69,7 @@ namespace DX.Servers
             }
 
         }
-        public static void ParserCheck() 
+        private static void ParserCheck() 
         {
             foreach (var httplist in mp)
             {
@@ -93,7 +100,7 @@ namespace DX.Servers
                if (httplist[i].TCP_DestinationPort == 80 && httplist[i + 1].TCP_DestinationPort != 80)
                {
                    //req+res
-                   if (httplist[i].Time - httplist[i + 1].Time < (ulong)timeout)
+                   if (httplist[i].Time - httplist[i + 1].Time > (ulong)timeout*100000)
                    {
 
                    }

@@ -10,6 +10,7 @@ namespace DX.Models
     {
         NORMAL = 0,
         NET_TIMEOUT,
+        NET_DELAY_RESPONSE,
         NET_NO_RESPONSE,
         HTTP_ERROR,
         RESPONSE_ERROR

@@ -13,15 +13,31 @@ namespace DX.ViewModels
         
         public FliterWindowViewModel(MainWindowViewModel dataContext)
         {
-            TcpPackets = from iteam in dataContext.HttpList where iteam.Content.Length<15 && iteam.Content.Length>0 select iteam;
+            ErrorList = from iteam 
+                        in dataContext.HttpList 
+                        where iteam.ErrorCode== ErrorCode.RESPONSE_ERROR  || iteam.ErrorCode == ErrorCode.NET_NO_RESPONSE
+                        select iteam;
+
+            WarningList = from iteam 
+                          in dataContext.HttpList 
+                          where iteam.ErrorCode == ErrorCode.NET_TIMEOUT || iteam.ErrorCode == ErrorCode.HTTP_ERROR
+                          select iteam;
         }
 
 
-        private IEnumerable<HttpModel> _tcppackets;
-        public IEnumerable<HttpModel> TcpPackets
+        private IEnumerable<HttpModel> _errorlist;
+        public IEnumerable<HttpModel> ErrorList
         {
-            get { return _tcppackets; }
-            set { SetProperty(ref _tcppackets, value); }
+            get { return _errorlist; }
+            set { SetProperty(ref _errorlist, value); }
+        }
+
+
+        private IEnumerable<HttpModel> _warninglist;
+        public IEnumerable<HttpModel> WarningList
+        {
+            get { return _warninglist; }
+            set { SetProperty(ref _warninglist, value); }
         }
     }
 }

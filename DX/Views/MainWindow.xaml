@@ -13,6 +13,15 @@
         <local:UlongToDateTimeConverter x:Key="L2S"/>
         <local:BytesFormatConverter x:Key="BytesFormat"/>
         <local:IPConverter x:Key="IP"/>
+        <local:ClourConverter x:Key="clor"/>
+
+        <Style x:Key="ClorItemStyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <Binding RelativeSource="{RelativeSource Self}" Converter="{StaticResource clor}"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -66,7 +75,7 @@
                     <Separator Width="30" Background="White"></Separator>
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">分析結果</TextBlock>
                     <Separator Width="10" Background="White"></Separator>
-                    <Button>
+                    <Button Click="Button_Click_1">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Rectangle Fill="Green"   Stroke="Yellow"  Width="30" HorizontalAlignment="Right"/>
@@ -82,12 +91,11 @@
                     <Separator Width="10" Background="White"></Separator>
                     <Image Source="/Images/search.jpeg"></Image>
                 </StackPanel>
-                
-                <ListView x:Name="ListView"  Grid.Row="2" Grid.Column="0" 
-                          ItemsSource="{Binding Path=TcpPackets}"  SelectedItem="{Binding Path=TcpPacket}" SelectionChanged="ListView_SelectionChanged"
-                           >
+
+                <ListView x:Name="ListView"  Grid.Row="2" Grid.Column="0"  ItemContainerStyle="{StaticResource ClorItemStyle}"
+                          ItemsSource="{Binding Path=TcpPackets}"  SelectedItem="{Binding Path=TcpPacket}" SelectionChanged="ListView_SelectionChanged">
                     <ListView.View>
-                        <GridView>
+                        <GridView >
                             <GridViewColumn Width="50" DisplayMemberBinding ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}" >
                                 <GridViewColumnHeader >
                                     <TextBlock  x:Name="no" Text= "NO."/>
