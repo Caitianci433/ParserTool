@@ -4,7 +4,7 @@
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
         xmlns:local="clr-namespace:DX.Models"
-        Title="PcapngParser" Height="500" Width="900">
+        Title="{Binding Path=Title}" Height="500" Width="900">
     <Window.Resources>
         <local:IndexConverter x:Key="MyIndexConverter"/>
         <local:StringToStringLengthConverter x:Key="S2L"/>
@@ -15,6 +15,7 @@
         <local:IPConverter x:Key="IP"/>
         <local:ClourConverter x:Key="clor"/>
         <local:StateConverter x:Key="State"/>
+        <local:StringLimitConverter x:Key="StrLimit"/>
         
         <Style x:Key="ClorItemStyle" TargetType="{x:Type ListViewItem}">
             <Setter Property="Background">
@@ -36,13 +37,14 @@
                 <MenuItem Header="Open"></MenuItem>
             </MenuItem>
             <MenuItem Header="Tools">
-                <MenuItem Header="Statistics" Click="Statistics_Click"></MenuItem>
+                <MenuItem Header="Settings"></MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="Version" Click="MenuItem_Click"></MenuItem>
             </MenuItem>
             
         </Menu>
+        
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <TextBlock x:Name="endtext" Text="{Binding Path=TcpPacket,Converter={StaticResource IP}}"></TextBlock>
         </StackPanel>
@@ -77,7 +79,7 @@
                     <Separator Width="10" Background="White"></Separator>
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">State:</TextBlock>
                     <Separator Width="10" Background="White"></Separator>
-                    <Button>
+                    <Button Click="Statistics_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Rectangle Fill="{Binding Path=State,Converter={StaticResource State}}"   Stroke="Black"  Width="30" HorizontalAlignment="Right"/>
@@ -180,7 +182,7 @@
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
                                         <DockPanel>
-                                    <TextBox x:Name="content_detail" Text="{Binding Path=Content}"></TextBox>
+                                    <TextBox x:Name="content_detail" Text="{Binding Path=Content,Converter={StaticResource StrLimit}}"></TextBox>
                                         </DockPanel>
                                     </TreeViewItem.Header>
                                 </TreeViewItem>

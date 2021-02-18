@@ -48,7 +48,7 @@ namespace DX.Views
         private void OnSearch(object sender, TextChangedEventArgs e)
         {
             List<HttpModel> list = (this.DataContext as MainWindowViewModel).HttpList;
-            ListView.ItemsSource = from iteam in list where iteam.Content.Contains(searchtext.Text) select iteam;
+            (this.DataContext as MainWindowViewModel).TcpPackets = (from iteam in list where iteam.Content.Contains(searchtext.Text) select iteam).ToList();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -57,14 +57,17 @@ namespace DX.Views
             {
                 int port = (int)combobox.SelectedItem;
                 List<HttpModel> list = (this.DataContext as MainWindowViewModel).HttpList;
-                ListView.ItemsSource = from iteam in list where (iteam.TCP_DestinationPort == port) || (iteam.TCP_SourcePort == port) select iteam;
+                (this.DataContext as MainWindowViewModel).TcpPackets = (from iteam in list where (iteam.TCP_DestinationPort == port) || (iteam.TCP_SourcePort == port) select iteam).ToList();
+            }
+            else
+            {
+                (this.DataContext as MainWindowViewModel).TcpPackets = (this.DataContext as MainWindowViewModel).HttpList;
             }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             combobox.SelectedItem = null;
-            ListView.ItemsSource = (this.DataContext as MainWindowViewModel).HttpList;
         }
 
         private void Statistics_Click(object sender, RoutedEventArgs e)
@@ -86,7 +89,5 @@ namespace DX.Views
         {
             ListView.ScrollIntoView(ListView.SelectedItem);
         }
-
-        
     }
 }

@@ -8,8 +8,30 @@
     <Window.Resources>
         <local:IndexConverter x:Key="MyIndexConverter"/>
         <local:UlongToDateTimeConverter x:Key="L2S"/>
+        <local:IE2CountConverter x:Key="IE2C"/>
     </Window.Resources>
-    <Grid>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition ></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <TextBlock>ERROR:</TextBlock>
+                <TextBlock x:Name="error_number" Text="{Binding Path=ErrorList,Converter={StaticResource IE2C}}"></TextBlock>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <TextBlock>WARNING:</TextBlock>
+                <TextBlock x:Name="warning_number" Text="{Binding Path=WarningList,Converter={StaticResource IE2C}}"></TextBlock>
+            </StackPanel>
+
+            
+        </Grid>
+        <Grid  Grid.Row="1">
         <TreeView Name="FliterTreeView" >
             <TreeViewItem Header="ERROR" IsSelected="True" >
                 <ListView  x:Name="errorlist" ItemsSource="{Binding Path=ErrorList}" SelectionChanged="errorlist_SelectionChanged"  >
@@ -41,5 +63,6 @@
                 </ListView>
             </TreeViewItem>
         </TreeView>
+        </Grid>
     </Grid>
 </Window>

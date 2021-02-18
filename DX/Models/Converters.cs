@@ -1,5 +1,6 @@
 ﻿using DX.Common;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -73,11 +74,11 @@ namespace DX.Models
 
             if (TCP_DestinationPort == 80)
             {
-                str = TCP_SourcePort + "--------->" + TCP_DestinationPort;
+                str = TCP_SourcePort + "------>" + TCP_DestinationPort;
             }
             else
             {
-                str = TCP_DestinationPort + "<---------" + TCP_SourcePort;
+                str = TCP_DestinationPort + "<------" + TCP_SourcePort;
             }
             return str;
         }
@@ -111,7 +112,13 @@ namespace DX.Models
             {
                 HttpModel http = value as HttpModel;
                 byte[] byteArray = System.Text.Encoding.Default.GetBytes(http.Content);
-                return Tools.BytesToShowBytes(byteArray);
+                string str = Tools.BytesToShowBytes(byteArray);
+
+                if (str.Length > 2000)
+                {
+                    str = str.Remove(2000, str.Length - 2000);
+                }
+                return str;
             }
             else
             {
@@ -135,7 +142,7 @@ namespace DX.Models
                 HttpModel http = value as HttpModel;
                 string str = "IP: FROM " + http.IP_SourceAddress + ":" + http.TCP_SourcePort
                                     + "     ------->     TO " + http.IP_DestinationAddress + ":" + http.TCP_DestinationPort;
-                return str;
+                return str.Replace(',','.');
             }
             else
             {
@@ -156,31 +163,38 @@ namespace DX.Models
         {
             ListViewItem item = (ListViewItem)value;
             ListView listView =ItemsControl.ItemsControlFromItemContainer(item) as ListView;
-            var obj = listView.ItemContainerGenerator.ItemFromContainer(item);
-
-            ErrorCode errorCode = (obj as HttpModel).ErrorCode;
-            switch (errorCode)
+            if (listView!=null)
             {
-                case ErrorCode.NORMAL:
-                    return Brushes.White;
+                var obj = listView.ItemContainerGenerator.ItemFromContainer(item);
 
-                case ErrorCode.NET_TIMEOUT:
-                    return Brushes.Yellow;
+                ErrorCode errorCode = (obj as HttpModel).ErrorCode;
+                switch (errorCode)
+                {
+                    case ErrorCode.NORMAL:
+                        return Brushes.White;
 
-                case ErrorCode.NET_DELAY_RESPONSE:
-                    return Brushes.Red;
+                    case ErrorCode.NET_TIMEOUT:
+                        return Brushes.Yellow;
 
-                case ErrorCode.NET_NO_RESPONSE:
-                    return Brushes.Purple;
+                    case ErrorCode.NET_DELAY_RESPONSE:
+                        return Brushes.Red;
 
-                case ErrorCode.HTTP_ERROR:
-                    return Brushes.Yellow;
+                    case ErrorCode.NET_NO_RESPONSE:
+                        return Brushes.Purple;
 
-                case ErrorCode.RESPONSE_ERROR:
-                    return Brushes.Red;
+                    case ErrorCode.HTTP_ERROR:
+                        return Brushes.Yellow;
 
-                default:
-                    return Brushes.Red;
+                    case ErrorCode.RESPONSE_ERROR:
+                        return Brushes.Red;
+
+                    default:
+                        return Brushes.Red;
+                }
+            }
+            else
+            {
+                return Brushes.White;
             }
         }
 
@@ -209,6 +223,38 @@ namespace DX.Models
                     return Brushes.Green;
             }
 
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class StringLimitConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string str = (string)value;
+            if (str.Length > 2000)
+            {
+                str = str.Remove(100, str.Length - 100)+"......";
+            }
+            return str;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class IE2CountConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            IEnumerable<HttpModel> ie = (IEnumerable<HttpModel>)value;
+            return ie.Count();
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

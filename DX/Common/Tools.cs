@@ -12,7 +12,7 @@ namespace DX.Common
         public static string BytesToShowBytes(byte[] byteArray)
         {
             StringBuilder str = new StringBuilder();
-            str.Append("ADRESS    |00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\r\n");
+            str.Append("ADDRESS   |00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\r\n");
             str.Append("\r\n");
             for (int i = 0, j = 0, k = 0, l = 0; i < byteArray.Length; i++, k++)
             {

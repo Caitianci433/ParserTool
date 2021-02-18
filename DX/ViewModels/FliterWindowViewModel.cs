@@ -22,6 +22,7 @@ namespace DX.ViewModels
                           in dataContext.HttpList 
                           where iteam.ErrorCode == ErrorCode.NET_TIMEOUT || iteam.ErrorCode == ErrorCode.HTTP_ERROR
                           select iteam;
+            
         }
 
 
@@ -39,5 +40,7 @@ namespace DX.ViewModels
             get { return _warninglist; }
             set { SetProperty(ref _warninglist, value); }
         }
+
+
     }
 }

@@ -31,11 +31,11 @@ namespace DX.ViewModels
             set { SetProperty(ref _portlist, value); }
         }
 
-        private string _text = "";
-        public string TextMessage
+        private string _title = "PcapngParser";
+        public string Title
         {
-            get { return _text; }
-            set { SetProperty(ref _text, value); }
+            get { return _title; }
+            set { SetProperty(ref _title, value); }
         }
 
 
@@ -208,6 +208,7 @@ namespace DX.ViewModels
         public void Grid_DragEnter(object sender, DragEventArgs e)
         {
             string fileName = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            Title = fileName+" is loading";
             if (!fileName.EndsWith(".pcapng"))
             {
                 MessageBox.Show("Can not Parser this file!");
@@ -219,7 +220,9 @@ namespace DX.ViewModels
             {
                 HttpList.Clear();
                 InitData(fileName);
+                Title = fileName + " is Parsering";
                 OnParser();
+                Title = fileName + " is Ready";
             }
             catch (Exception)
             {
@@ -231,10 +234,10 @@ namespace DX.ViewModels
         {
             ParserServer.Parser(HttpList);
             // state 
-            var ErrorList = from iteam
-                            in HttpList
-                            where iteam.ErrorCode == ErrorCode.RESPONSE_ERROR || iteam.ErrorCode == ErrorCode.NET_NO_RESPONSE
-                            select iteam;
+            var ErrorList   = from iteam
+                              in HttpList
+                              where iteam.ErrorCode == ErrorCode.RESPONSE_ERROR || iteam.ErrorCode == ErrorCode.NET_NO_RESPONSE
+                              select iteam;
 
             var WarningList = from iteam
                               in HttpList
@@ -251,6 +254,11 @@ namespace DX.ViewModels
                 {
                     State = StateCode.WARNING;
                 }
+                else
+                {
+                    State = StateCode.NORMAL;
+                }
+
             }
 
             HttpList.Sort();
