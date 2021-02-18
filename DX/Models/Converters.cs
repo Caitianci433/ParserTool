@@ -167,17 +167,48 @@ namespace DX.Models
                 case ErrorCode.NET_TIMEOUT:
                     return Brushes.Yellow;
 
-                case ErrorCode.NET_NO_RESPONSE:
+                case ErrorCode.NET_DELAY_RESPONSE:
                     return Brushes.Red;
+
+                case ErrorCode.NET_NO_RESPONSE:
+                    return Brushes.Purple;
 
                 case ErrorCode.HTTP_ERROR:
                     return Brushes.Yellow;
 
                 case ErrorCode.RESPONSE_ERROR:
                     return Brushes.Red;
+
                 default:
                     return Brushes.Red;
             }
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class StateConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            switch ((StateCode)value)
+            {
+                case StateCode.NORMAL:
+                    return Brushes.Green;
+
+                case StateCode.WARNING:
+                    return Brushes.Yellow;
+
+                case StateCode.ERROR:
+                    return Brushes.Red;
+
+                default:
+                    return Brushes.Green;
+            }
+
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

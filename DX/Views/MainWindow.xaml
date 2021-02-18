@@ -14,7 +14,8 @@
         <local:BytesFormatConverter x:Key="BytesFormat"/>
         <local:IPConverter x:Key="IP"/>
         <local:ClourConverter x:Key="clor"/>
-
+        <local:StateConverter x:Key="State"/>
+        
         <Style x:Key="ClorItemStyle" TargetType="{x:Type ListViewItem}">
             <Setter Property="Background">
                 <Setter.Value>
@@ -58,7 +59,6 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Row="0" Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="20"></RowDefinition>
                     <RowDefinition Height="25"></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
@@ -71,14 +71,16 @@
                         
                     </ComboBox>
                     <Separator Width="10" Background="White"></Separator>
-                    
-                    <Separator Width="30" Background="White"></Separator>
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">分析結果</TextBlock>
+                    <TextBox x:Name="searchtext" Width="120" TextChanged="OnSearch" BorderBrush="Black"></TextBox>
                     <Separator Width="10" Background="White"></Separator>
-                    <Button Click="Button_Click_1">
+                    <Image Source="/Images/search.jpeg"></Image>
+                    <Separator Width="10" Background="White"></Separator>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">State:</TextBlock>
+                    <Separator Width="10" Background="White"></Separator>
+                    <Button>
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Rectangle Fill="Green"   Stroke="Yellow"  Width="30" HorizontalAlignment="Right"/>
+                                <Rectangle Fill="{Binding Path=State,Converter={StaticResource State}}"   Stroke="Black"  Width="30" HorizontalAlignment="Right"/>
                             </ControlTemplate>
                         </Button.Template>"
                     </Button>
@@ -86,13 +88,7 @@
                     <Separator Width="10" Background="White"></Separator>
                 </StackPanel>
                 
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <TextBox x:Name="searchtext" Width="150" TextChanged="OnSearch"></TextBox>
-                    <Separator Width="10" Background="White"></Separator>
-                    <Image Source="/Images/search.jpeg"></Image>
-                </StackPanel>
-
-                <ListView x:Name="ListView"  Grid.Row="2" Grid.Column="0"  ItemContainerStyle="{StaticResource ClorItemStyle}"
+                <ListView x:Name="ListView"  Grid.Row="1" Grid.Column="0"  ItemContainerStyle="{StaticResource ClorItemStyle}"
                           ItemsSource="{Binding Path=TcpPackets}"  SelectedItem="{Binding Path=TcpPacket}" SelectionChanged="ListView_SelectionChanged">
                     <ListView.View>
                         <GridView >

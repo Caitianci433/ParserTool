@@ -13,7 +13,16 @@ namespace DX.Models
         NET_DELAY_RESPONSE,
         NET_NO_RESPONSE,
         HTTP_ERROR,
-        RESPONSE_ERROR
+        RESPONSE_ERROR,
+        REQUEST_ERROR
+    }
+
+    public enum StateCode
+    {
+        NORMAL = 0,
+        WARNING,
+        ERROR,
+        DEFALUT
     }
 
     public class HttpModel :IComparable

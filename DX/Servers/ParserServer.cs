@@ -10,8 +10,8 @@ namespace DX.Servers
 {
     public class ReqRse 
     { 
-        public HttpModel req { get; set; }
-        public HttpModel res { get; set; }
+        public HttpModel Req { get; set; }
+        public HttpModel Res { get; set; }
     }
     public class ParserServer
     {
@@ -23,6 +23,8 @@ namespace DX.Servers
 
         public static void Parser(List<HttpModel> https) 
         {
+            mp.Clear();
+            list.Clear();
             DispacherPacket(https);
             ParserCheck();
         }
@@ -78,7 +80,6 @@ namespace DX.Servers
                 ParserCheckHTTP(list);
 
                 ParserCheckResponse(list);
-
             }
 
         }
@@ -92,7 +93,7 @@ namespace DX.Servers
                    
                    httplist[i].ErrorCode = ErrorCode.NET_NO_RESPONSE;
                     ReqRse reqRse = new ReqRse();
-                    reqRse.req = httplist[i];
+                    reqRse.Req = httplist[i];
                     list.Add(reqRse);
                     i++;
                    continue;
@@ -110,8 +111,8 @@ namespace DX.Servers
                        httplist[i + 1].ErrorCode = ErrorCode.NET_TIMEOUT;
                    }
                     ReqRse reqRse = new ReqRse();
-                    reqRse.req = httplist[i];
-                    reqRse.res = httplist[i+1];
+                    reqRse.Req = httplist[i];
+                    reqRse.Res = httplist[i+1];
                     list.Add(reqRse);
                     i += 2;
                }
@@ -120,38 +121,32 @@ namespace DX.Servers
                    //req+req
                    httplist[i].ErrorCode = ErrorCode.NET_NO_RESPONSE;
                     ReqRse reqRse = new ReqRse();
-                    reqRse.req = httplist[i];
+                    reqRse.Req = httplist[i];
                     list.Add(reqRse);
                     i++;
-
                }
                else if (httplist[i].TCP_DestinationPort != 80 && httplist[i + 1].TCP_DestinationPort != 80)
                {
                    //res+res
                    httplist[i].ErrorCode = ErrorCode.NET_NO_RESPONSE;
                     ReqRse reqRse = new ReqRse();
-                    reqRse.res = httplist[i];
+                    reqRse.Res = httplist[i];
                     list.Add(reqRse);
                     i++;
                }
-
            }
-
-
-
         }
 
         private static void ParserCheckHTTP(List<ReqRse> httplist)
         {
             foreach (var http in httplist)
             {
-                if (http.req !=null && http.res != null)
+                if (http.Req !=null && http.Res != null)
                 {
-                    if (http.res.Head != "HTTP/1.1 200 OK")
+                    if (http.Res.Head != "HTTP/1.1 200 OK")
                     {
-                        http.res.ErrorCode = ErrorCode.HTTP_ERROR;
+                        http.Res.ErrorCode = ErrorCode.HTTP_ERROR;
                     }
-                    
                 }
             }
         }
@@ -160,30 +155,30 @@ namespace DX.Servers
         {
             foreach (var http in httplist)
             {
-                if (http.req != null && http.res != null)
+                if (http.Req != null && http.Res != null)
                 {
                     //download
-                    if (http.req.Content.Contains("FileList_get") || 
-                        http.req.Content.Contains("FileList_put") ||
-                        http.req.Content.Contains("FileList_getFileInfo") ||
-                        http.req.Content.Contains("FileList_getDefaultFileInfo") ||
-                        http.req.Content.Contains("File_beginDownload") ||
-                        http.req.Content.Contains("File_beginPartiallyDownload") ||
-                        http.req.Content.Contains("File_prepareDownload") ||
-                        http.req.Content.Contains("File_download") ||
-                        http.req.Content.Contains("File_flushDownload") ||
-                        http.req.Content.Contains("File_endDownload") ||
-                        http.req.Content.Contains("File_flush") ||
-                        http.req.Content.Contains("File_beginLazyDownload") ||
-                        http.req.Content.Contains("CPU_notifyParameterUpdated") ||
-                        http.req.Content.Contains("CPU_isChangeConnectingIpAddr") ||
-                        http.req.Content.Contains("File_beginUpload") ||
-                        http.req.Content.Contains("File_upload") ||
-                        http.req.Content.Contains("File_endUpload") ||
-                        http.req.Content.Contains("Sync_lock") ||
-                        http.req.Content.Contains("Sync_unlock") ||
-                        http.req.Content.Contains("File_beginTarceDownload") ||
-                        http.req.Content.Contains("File_endTraceDownload") 
+                    if (http.Req.Content.Contains("FileList_get") || 
+                        http.Req.Content.Contains("FileList_put") ||
+                        http.Req.Content.Contains("FileList_getFileInfo") ||
+                        http.Req.Content.Contains("FileList_getDefaultFileInfo") ||
+                        http.Req.Content.Contains("File_beginDownload") ||
+                        http.Req.Content.Contains("File_beginPartiallyDownload") ||
+                        http.Req.Content.Contains("File_prepareDownload") ||
+                        http.Req.Content.Contains("File_download") ||
+                        http.Req.Content.Contains("File_flushDownload") ||
+                        http.Req.Content.Contains("File_endDownload") ||
+                        http.Req.Content.Contains("File_flush") ||
+                        http.Req.Content.Contains("File_beginLazyDownload") ||
+                        http.Req.Content.Contains("CPU_notifyParameterUpdated") ||
+                        http.Req.Content.Contains("CPU_isChangeConnectingIpAddr") ||
+                        http.Req.Content.Contains("File_beginUpload") ||
+                        http.Req.Content.Contains("File_upload") ||
+                        http.Req.Content.Contains("File_endUpload") ||
+                        http.Req.Content.Contains("Sync_lock") ||
+                        http.Req.Content.Contains("Sync_unlock") ||
+                        http.Req.Content.Contains("File_beginTarceDownload") ||
+                        http.Req.Content.Contains("File_endTraceDownload") 
                         )
                     {
                         

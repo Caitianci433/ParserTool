@@ -87,11 +87,6 @@ namespace DX.Views
             ListView.ScrollIntoView(ListView.SelectedItem);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            ParserServer.Parser((this.DataContext as MainWindowViewModel).HttpList);
-            (this.DataContext as MainWindowViewModel).HttpList.Sort();
-            ListView.ItemsSource = (this.DataContext as MainWindowViewModel).HttpList;
-        }
+        
     }
 }

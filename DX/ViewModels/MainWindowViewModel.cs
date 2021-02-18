@@ -53,9 +53,14 @@ namespace DX.ViewModels
             set { SetProperty(ref _tcppacket, value); }
         }
 
-        
+        private StateCode _state = StateCode.DEFALUT;
+        public StateCode State
+        {
+            get { return _state; }
+            set { SetProperty(ref _state, value); }
+        }
 
-        
+
         private void InitData(string path ) 
         {
             List<Block> BlockList = Tools.BytesToBlock(Tools.ReadPcapngFile(path));
@@ -85,6 +90,7 @@ namespace DX.ViewModels
         private void DispacherPacket(List<PacketData> Packist) 
         {
             IEnumerator itor = Packist.GetEnumerator();
+            List<int> pl = new List<int>();
             Dictionary<int, List<PacketData>> mp = new Dictionary<int, List<PacketData>>();
             while (itor.MoveNext())
             {
@@ -123,12 +129,13 @@ namespace DX.ViewModels
                 }
             }
 
+            PortList.Clear();
             foreach (var item in mp.Keys)
             {
-                PortList.Add(item);
+                pl.Add(item);
             }
-            
 
+            PortList = pl;
             HttpList = HttpFromPacketData(mp);
         }
 
@@ -212,9 +219,7 @@ namespace DX.ViewModels
             {
                 HttpList.Clear();
                 InitData(fileName);
-
-                HttpList.Sort();
-                TcpPackets = HttpList;
+                OnParser();
             }
             catch (Exception)
             {
@@ -222,6 +227,34 @@ namespace DX.ViewModels
                 return;
             }
         }
+        private void OnParser()
+        {
+            ParserServer.Parser(HttpList);
+            // state 
+            var ErrorList = from iteam
+                            in HttpList
+                            where iteam.ErrorCode == ErrorCode.RESPONSE_ERROR || iteam.ErrorCode == ErrorCode.NET_NO_RESPONSE
+                            select iteam;
 
+            var WarningList = from iteam
+                              in HttpList
+                              where iteam.ErrorCode == ErrorCode.NET_TIMEOUT || iteam.ErrorCode == ErrorCode.HTTP_ERROR
+                              select iteam;
+
+            if (WarningList.Count()>0)
+            {
+                State = StateCode.ERROR;
+            }
+            else
+            {
+                if (ErrorList.Count() > 0)
+                {
+                    State = StateCode.WARNING;
+                }
+            }
+
+            HttpList.Sort();
+            TcpPackets = HttpList;
+        }
     }
 }
