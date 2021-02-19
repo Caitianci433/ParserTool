@@ -4,7 +4,7 @@
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
         xmlns:local="clr-namespace:DX.Models"
-        Title="{Binding Path=Title}" Height="500" Width="900">
+        Title="{Binding Path=Title}" Height="500" Width="900" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <local:IndexConverter x:Key="MyIndexConverter"/>
         <local:StringToStringLengthConverter x:Key="S2L"/>
@@ -44,10 +44,14 @@
             </MenuItem>
             
         </Menu>
+        <Grid Grid.Row="2">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="endtext" Text="{Binding Path=TcpPacket,Converter={StaticResource IP}}"></TextBlock>
+            </StackPanel>
+            
+
+        </Grid>
         
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <TextBlock x:Name="endtext" Text="{Binding Path=TcpPacket,Converter={StaticResource IP}}"></TextBlock>
-        </StackPanel>
         
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>

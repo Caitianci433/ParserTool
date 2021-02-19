@@ -9,6 +9,8 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace DX.ViewModels
 {
@@ -59,7 +61,6 @@ namespace DX.ViewModels
             get { return _state; }
             set { SetProperty(ref _state, value); }
         }
-
 
         private void InitData(string path ) 
         {
@@ -214,6 +215,7 @@ namespace DX.ViewModels
         public void StartParser(string fileName) 
         {
             Title = fileName + " is loading";
+
             if (!fileName.EndsWith(".pcapng"))
             {
                 MessageBox.Show("Can not Parser this file!");
@@ -226,6 +228,7 @@ namespace DX.ViewModels
                 HttpList.Clear();
                 InitData(fileName);
                 Title = fileName + " is Parsering";
+
                 OnParser();
                 Title = fileName + " Parser Over";
             }

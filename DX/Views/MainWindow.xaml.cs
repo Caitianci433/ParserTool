@@ -19,6 +19,7 @@ namespace DX.Views
     public partial class MainWindow : Window
     {
         private FliterWindow fliterWindow=null;
+        private ProgressbartestWindow progressbartestWindow = new ProgressbartestWindow();
         public MainWindow()
         {
             InitializeComponent();
@@ -29,7 +30,9 @@ namespace DX.Views
 
             this.DragEnter += (s, e) =>
             {
+                progressbartestWindow.Show();
                 mainWindowViewModel.Grid_DragEnter(s, e);
+                progressbartestWindow.Close();
             };
 
             this.Drop += (s, e) =>
@@ -37,10 +40,10 @@ namespace DX.Views
                 mainWindowViewModel.Grid_Drop(s, e);
             };
 
-            
+            this.Closed += (s,e) => { Application.Current.Shutdown(); };
         }
       
-
+       
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Pcapng Parser\r\nVerson 0.1\r\nAuthor: caitianci@hyron.com");
@@ -106,7 +109,10 @@ namespace DX.Views
                 return;
             }
             string txtFile = openFileDialog.FileName;
+            progressbartestWindow = new ProgressbartestWindow();
+            progressbartestWindow.Show();
             (this.DataContext as MainWindowViewModel).StartParser(txtFile);
+            progressbartestWindow.Close();
         }
     }
 }
