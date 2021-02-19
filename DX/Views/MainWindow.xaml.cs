@@ -2,6 +2,7 @@
 using DX.Models;
 using DX.Servers;
 using DX.ViewModels;
+using Microsoft.Win32;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -88,6 +89,24 @@ namespace DX.Views
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListView.ScrollIntoView(ListView.SelectedItem);
+        }
+
+        private void Menu_OpenOnClick(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Select the file";
+            openFileDialog.Filter = "pcapng|*.pcapng";
+            openFileDialog.FileName = string.Empty;
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.Multiselect = false;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.DefaultExt = "pcapng";
+            if (openFileDialog.ShowDialog() == false)
+            {
+                return;
+            }
+            string txtFile = openFileDialog.FileName;
+            (this.DataContext as MainWindowViewModel).StartParser(txtFile);
         }
     }
 }

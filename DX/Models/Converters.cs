@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -94,7 +95,7 @@ namespace DX.Models
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             ulong time = (ulong)value;
-            string str = new DateTime(621355968000000000).AddMilliseconds(time / 1000).ToString("yyyy-MM-dd HH:mm:ss.fff");
+            string str = new DateTime(621355968000000000).AddMilliseconds(time / 1000).ToString(ConfigurationManager.AppSettings["TimeFormat"]);
             return str;
         }
 
@@ -235,10 +236,13 @@ namespace DX.Models
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            int stringLimit = int.Parse(ConfigurationManager.AppSettings["StringLimit"]);
+            int displayLimit = int.Parse(ConfigurationManager.AppSettings["DisplayLimit"]);
+
             string str = (string)value;
-            if (str.Length > 2000)
+            if (str.Length > stringLimit)
             {
-                str = str.Remove(100, str.Length - 100)+"......";
+                str = str.Remove(displayLimit, str.Length - displayLimit) +"......";
             }
             return str;
         }

@@ -8,6 +8,7 @@
     <Window.Resources>
         <local:IndexConverter x:Key="MyIndexConverter"/>
         <local:UlongToDateTimeConverter x:Key="L2S"/>
+        <local:PortToCMDRESConverter x:Key="P2CS"/>
         <local:IE2CountConverter x:Key="IE2C"/>
     </Window.Resources>
     <Grid Margin="5">
@@ -20,11 +21,11 @@
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock>ERROR:</TextBlock>
                 <TextBlock x:Name="error_number" Text="{Binding Path=ErrorList,Converter={StaticResource IE2C}}"></TextBlock>
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock>WARNING:</TextBlock>
                 <TextBlock x:Name="warning_number" Text="{Binding Path=WarningList,Converter={StaticResource IE2C}}"></TextBlock>
             </StackPanel>
@@ -41,7 +42,9 @@
                                 <Rectangle Fill="Red"   Stroke="Black"  Width="20" HorizontalAlignment="Left"/>
                                 <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}"></TextBlock>
                                 <TextBlock Text=" "></TextBlock>
-                                <TextBlock Text="{Binding Path=Time,Converter={StaticResource L2S}}"></TextBlock>
+                                    <TextBlock Text="{Binding Path=TCP_DestinationPort,Converter={StaticResource P2CS}}"></TextBlock>
+                                    <TextBlock Text=" "></TextBlock>
+                                    <TextBlock Text="{Binding Path=Time,Converter={StaticResource L2S}}"></TextBlock>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -56,7 +59,9 @@
                                 <Rectangle Fill="Yellow"   Stroke="Black"  Width="20" HorizontalAlignment="Left"/>
                                 <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}"></TextBlock>
                                 <TextBlock Text=" "></TextBlock>
-                                <TextBlock Text="{Binding Path=Time,Converter={StaticResource L2S}}"></TextBlock>
+                                    <TextBlock Text="{Binding Path=TCP_DestinationPort,Converter={StaticResource P2CS}}"></TextBlock>
+                                    <TextBlock Text=" "></TextBlock>
+                                    <TextBlock Text="{Binding Path=Time,Converter={StaticResource L2S}}"></TextBlock>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>

@@ -208,7 +208,12 @@ namespace DX.ViewModels
         public void Grid_DragEnter(object sender, DragEventArgs e)
         {
             string fileName = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
-            Title = fileName+" is loading";
+            StartParser(fileName);
+        }
+
+        public void StartParser(string fileName) 
+        {
+            Title = fileName + " is loading";
             if (!fileName.EndsWith(".pcapng"))
             {
                 MessageBox.Show("Can not Parser this file!");
@@ -222,14 +227,14 @@ namespace DX.ViewModels
                 InitData(fileName);
                 Title = fileName + " is Parsering";
                 OnParser();
-                Title = fileName + " is Ready";
+                Title = fileName + " Parser Over";
             }
             catch (Exception)
             {
                 MessageBox.Show("Parser file ERROR!");
                 return;
             }
-        }
+        } 
         private void OnParser()
         {
             ParserServer.Parser(HttpList);
