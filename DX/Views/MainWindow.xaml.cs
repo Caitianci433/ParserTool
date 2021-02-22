@@ -3,6 +3,7 @@ using DX.Models;
 using DX.Servers;
 using DX.ViewModels;
 using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -113,6 +114,27 @@ namespace DX.Views
             progressbartestWindow.Show();
             (this.DataContext as MainWindowViewModel).StartParser(txtFile);
             progressbartestWindow.Close();
+        }
+
+        private void Menu_SaveOnClick(object sender, RoutedEventArgs e)
+        {
+            // Configure save file dialog box
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "Document"; // Default file name
+            dlg.DefaultExt = ".text"; // Default file extension
+            dlg.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
+
+            // Show save file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // Save document 
+                string filename = dlg.FileName;
+                FileWriterServer.WriteTheFile(filename);
+
+            }
         }
     }
 }

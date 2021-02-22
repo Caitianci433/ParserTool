@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace DX.Servers
 {
+
+
+
     public class ReqRse 
     { 
         public HttpModel Req { get; set; }

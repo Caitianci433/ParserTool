@@ -35,6 +35,7 @@
         <Menu FontFamily="ＭＳ Ｐゴシック" FontSize="14">
             <MenuItem Header="File">
                 <MenuItem Header="Open" Click="Menu_OpenOnClick"></MenuItem>
+                <MenuItem Header="Save" Click="Menu_SaveOnClick"></MenuItem>
             </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Header="Settings"></MenuItem>
