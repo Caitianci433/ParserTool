@@ -39,6 +39,7 @@
             </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Header="Settings"></MenuItem>
+                <MenuItem Header="Compare" Click="Menu_CompareOnClick"></MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="Version" Click="MenuItem_Click"></MenuItem>
@@ -96,11 +97,12 @@
                 </StackPanel>
                 
                 <ListView x:Name="ListView"  Grid.Row="1" Grid.Column="0"  ItemContainerStyle="{StaticResource ClorItemStyle}"
-                          ItemsSource="{Binding Path=TcpPackets}"  SelectedItem="{Binding Path=TcpPacket}" SelectionChanged="ListView_SelectionChanged">
+                          ItemsSource="{Binding Path=TcpPackets}"  SelectedItem="{Binding Path=TcpPacket}" 
+                          SelectionChanged="ListView_SelectionChanged">
                     <ListView.View>
                         <GridView >
                             <GridViewColumn Width="50" DisplayMemberBinding ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}" >
-                                <GridViewColumnHeader >
+                                <GridViewColumnHeader>
                                     <TextBlock  x:Name="no" Text= "NO."/>
                                 </GridViewColumnHeader>
                             </GridViewColumn>

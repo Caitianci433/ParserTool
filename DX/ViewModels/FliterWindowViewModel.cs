@@ -22,6 +22,29 @@ namespace DX.ViewModels
                           in dataContext.HttpList 
                           where iteam.ErrorCode == ErrorCode.NET_TIMEOUT || iteam.ErrorCode == ErrorCode.HTTP_ERROR
                           select iteam;
+
+            Dictionary<string, List<HttpModel>> mp = new Dictionary<string, List<HttpModel>>();
+            IPList.Clear();
+            foreach (var item in ErrorList)
+            {
+                if (!mp.ContainsKey(item.IP_DestinationAddress))
+                {
+                    List<HttpModel> newlist = new List<HttpModel>();
+                    newlist.Add(item);
+                    mp.Add(item.IP_DestinationAddress, newlist);
+                }
+                else
+                {
+                    List<HttpModel> oldlist;
+                    mp.TryGetValue(item.IP_DestinationAddress, out oldlist);
+                    oldlist.Add(item);
+                }
+            }
+
+            foreach (var key in mp.Keys)
+            {
+                IPList.Add(key);
+            }
             
         }
 
@@ -41,6 +64,12 @@ namespace DX.ViewModels
             set { SetProperty(ref _warninglist, value); }
         }
 
+        private List<String> _iplist = new List<string>();
+        public List<String> IPList 
+        {
+            get { return _iplist; }
+            set { SetProperty(ref _iplist, value); }
+        }
 
     }
 }

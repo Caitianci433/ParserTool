@@ -81,7 +81,6 @@ namespace DX.ViewModels
                             Packist.Add(packetData);
                         }
                     }
-
                 }
 
             }

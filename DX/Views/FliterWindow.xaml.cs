@@ -34,5 +34,10 @@ namespace DX.Views
                 maindataContext.TcpPacket = (Models.HttpModel)warninglist.SelectedItem;
             }
         }
+
+        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            
+        }
     }
 }

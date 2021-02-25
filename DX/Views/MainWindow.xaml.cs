@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -20,7 +19,8 @@ namespace DX.Views
     public partial class MainWindow : Window
     {
         private FliterWindow fliterWindow=null;
-        private ProgressbartestWindow progressbartestWindow = new ProgressbartestWindow();
+        private CompareWindow compareWindow = null;
+        private ProgressbartestWindow progressbartestWindow ;
         public MainWindow()
         {
             InitializeComponent();
@@ -31,6 +31,7 @@ namespace DX.Views
 
             this.DragEnter += (s, e) =>
             {
+                progressbartestWindow = new ProgressbartestWindow();
                 progressbartestWindow.Show();
                 mainWindowViewModel.Grid_DragEnter(s, e);
                 progressbartestWindow.Close();
@@ -44,10 +45,10 @@ namespace DX.Views
             this.Closed += (s,e) => { Application.Current.Shutdown(); };
         }
       
-       
+        
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Pcapng Parser\r\nVerson 0.1\r\nAuthor: caitianci@hyron.com");
+            MessageBox.Show("Pcapng Parser\r\nVerson 0.1\r\n");
         }
 
         private void OnSearch(object sender, TextChangedEventArgs e)
@@ -67,7 +68,9 @@ namespace DX.Views
             else
             {
                 (this.DataContext as MainWindowViewModel).TcpPackets = (this.DataContext as MainWindowViewModel).HttpList;
+                
             }
+            
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -94,7 +97,7 @@ namespace DX.Views
         {
             ListView.ScrollIntoView(ListView.SelectedItem);
         }
-
+        
         private void Menu_OpenOnClick(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -133,8 +136,22 @@ namespace DX.Views
                 // Save document 
                 string filename = dlg.FileName;
                 FileWriterServer.WriteTheFile(filename);
-
+                
             }
+        }
+
+        private void Menu_CompareOnClick(object sender, RoutedEventArgs e)
+        {
+            if (compareWindow == null)
+            {
+                compareWindow = new CompareWindow();
+                compareWindow.Closed += CompareWindow_Closed;
+                compareWindow.Show();
+            }
+        }
+        private void CompareWindow_Closed(object sender, System.EventArgs e)
+        {
+            this.compareWindow = null;
         }
     }
 }

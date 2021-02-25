@@ -266,4 +266,23 @@ namespace DX.Models
             throw new NotImplementedException();
         }
     }
+
+    public class StringLimitForFliterWindowConverter : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string str = (string)value;
+            if (str.Length > 20)
+            {
+                str = str.Remove(20, str.Length - 20) + "......";
+            }
+            
+            return str;
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

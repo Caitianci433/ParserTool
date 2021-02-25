@@ -4,12 +4,17 @@
              xmlns:prism="http://prismlibrary.com/"             
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:local="clr-namespace:DX.Models"
-             Title="Fliter" Height="400" Width="300" WindowStartupLocation="CenterScreen">
+             Title="FliterWindow"  WindowStartupLocation="CenterScreen"
+             Height="560" MaxHeight="560" MinHeight="560" Width="800" MaxWidth="800" MinWidth="800"  
+             ResizeMode="NoResize" >
     <Window.Resources>
         <local:IndexConverter x:Key="MyIndexConverter"/>
         <local:UlongToDateTimeConverter x:Key="L2S"/>
         <local:PortToCMDRESConverter x:Key="P2CS"/>
         <local:IE2CountConverter x:Key="IE2C"/>
+        <local:PortToDestinationConverter x:Key="P2D"/>
+        <local:StringToStringLengthConverter x:Key="S2L"/>
+        <local:StringLimitForFliterWindowConverter x:Key="S2LLF"/>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -21,52 +26,140 @@
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                <Rectangle Fill="Red"   Stroke="Black"  Width="20" HorizontalAlignment="Left"/>
                 <TextBlock>ERROR:</TextBlock>
                 <TextBlock x:Name="error_number" Text="{Binding Path=ErrorList,Converter={StaticResource IE2C}}"></TextBlock>
-            </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="   "></TextBlock>
+                <Rectangle Fill="Yellow"   Stroke="Black"  Width="20" HorizontalAlignment="Left"/>
                 <TextBlock>WARNING:</TextBlock>
                 <TextBlock x:Name="warning_number" Text="{Binding Path=WarningList,Converter={StaticResource IE2C}}"></TextBlock>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock>PLC_IP:</TextBlock>
+                <Button>
+                    <Image Source="/Images/fliter.jpeg"></Image>
+                </Button>
+
+                <ComboBox  x:Name="combobox"  ItemsSource="{Binding Path=IPList}"  
+                           SelectionChanged="ComboBox_SelectionChanged">
+                </ComboBox>
             </StackPanel>
 
             
         </Grid>
         <Grid  Grid.Row="1">
+            
         <TreeView Name="FliterTreeView" >
             <TreeViewItem Header="ERROR" IsSelected="True" >
-                <ListView  x:Name="errorlist" ItemsSource="{Binding Path=ErrorList}" SelectionChanged="errorlist_SelectionChanged"  >
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Rectangle Fill="Red"   Stroke="Black"  Width="20" HorizontalAlignment="Left"/>
-                                <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}"></TextBlock>
-                                <TextBlock Text=" "></TextBlock>
-                                    <TextBlock Text="{Binding Path=TCP_DestinationPort,Converter={StaticResource P2CS}}"></TextBlock>
-                                    <TextBlock Text=" "></TextBlock>
-                                    <TextBlock Text="{Binding Path=Time,Converter={StaticResource L2S}}"></TextBlock>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </TreeViewItem>
+                    <ListView x:Name="errorlist"  Grid.Row="1" Grid.Column="0"
+                          ItemsSource="{Binding Path=ErrorList}"   SelectionChanged="errorlist_SelectionChanged">
+                        <ListView.View>
+                            <GridView >
+                                <GridViewColumn Width="50" DisplayMemberBinding ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}" >
+                                    <GridViewColumnHeader >
+                                        <TextBlock  x:Name="no" Text= "NO."/>
+                                    </GridViewColumnHeader>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="175" DisplayMemberBinding="{Binding Path=Time,Converter={StaticResource L2S}}">
+                                    <GridViewColumnHeader >
+                                        <TextBlock  x:Name="time" Text= "Time"/>
+                                    </GridViewColumnHeader>
+                                </GridViewColumn>
+
+                                <GridViewColumn >
+                                    <GridViewColumnHeader >
+                                        <StackPanel Width="80" HorizontalAlignment="Center" >
+                                            <TextBlock  x:Name="plc_pc" Text= "SS-----PLC" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </GridViewColumnHeader>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource P2D}">
+                                                        <Binding Path="TCP_SourcePort"/>
+                                                        <Binding Path="TCP_DestinationPort"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn DisplayMemberBinding="{Binding Path=TCP_DestinationPort,Converter={StaticResource P2CS}}" Width="75">
+                                    <GridViewColumnHeader >
+                                        <StackPanel Width="75" HorizontalAlignment="Center" >
+                                            <TextBlock  x:Name="req_or_res" Text= "CMD/RES" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </GridViewColumnHeader>
+                                </GridViewColumn>
+
+                                <GridViewColumn DisplayMemberBinding="{Binding Path=Content,Converter={StaticResource S2LLF}}" Width="200">
+                                    <GridViewColumnHeader >
+                                        <TextBlock  x:Name="length" Text= "CONTENT" HorizontalAlignment="Center"/>
+                                    </GridViewColumnHeader>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </TreeViewItem>
 
             <TreeViewItem Header="WARNING" IsSelected="True">
-                <ListView  x:Name="warninglist" ItemsSource="{Binding Path=WarningList}" SelectionChanged="warninglist_SelectionChanged"  >
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Rectangle Fill="Yellow"   Stroke="Black"  Width="20" HorizontalAlignment="Left"/>
-                                <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}"></TextBlock>
-                                <TextBlock Text=" "></TextBlock>
-                                    <TextBlock Text="{Binding Path=TCP_DestinationPort,Converter={StaticResource P2CS}}"></TextBlock>
-                                    <TextBlock Text=" "></TextBlock>
-                                    <TextBlock Text="{Binding Path=Time,Converter={StaticResource L2S}}"></TextBlock>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </TreeViewItem>
+                    <ListView x:Name="warninglist"  Grid.Row="1" Grid.Column="0"
+                          ItemsSource="{Binding Path=WarningList}"   SelectionChanged="warninglist_SelectionChanged">
+                        <ListView.View>
+                            <GridView >
+                                <GridViewColumn Width="50" DisplayMemberBinding ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}" >
+                                    <GridViewColumnHeader >
+                                        <TextBlock Text= "NO."/>
+                                    </GridViewColumnHeader>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="175" DisplayMemberBinding="{Binding Path=Time,Converter={StaticResource L2S}}">
+                                    <GridViewColumnHeader >
+                                        <TextBlock Text= "Time"/>
+                                    </GridViewColumnHeader>
+                                </GridViewColumn>
+
+                                <GridViewColumn >
+                                    <GridViewColumnHeader >
+                                        <StackPanel Width="80" HorizontalAlignment="Center" >
+                                            <TextBlock Text= "SS-----PLC" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </GridViewColumnHeader>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource P2D}">
+                                                        <Binding Path="TCP_SourcePort"/>
+                                                        <Binding Path="TCP_DestinationPort"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn DisplayMemberBinding="{Binding Path=TCP_DestinationPort,Converter={StaticResource P2CS}}" Width="75">
+                                    <GridViewColumnHeader >
+                                        <StackPanel Width="75" HorizontalAlignment="Center" >
+                                            <TextBlock Text= "CMD/RES" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </GridViewColumnHeader>
+                                </GridViewColumn>
+
+                                <GridViewColumn DisplayMemberBinding="{Binding Path=Content,Converter={StaticResource S2LLF}}" Width="200">
+                                    <GridViewColumnHeader >
+                                        <TextBlock Text= "CONTENT" HorizontalAlignment="Center"/>
+                                    </GridViewColumnHeader>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </TreeViewItem>
         </TreeView>
         </Grid>
     </Grid>

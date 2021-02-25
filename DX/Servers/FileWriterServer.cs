@@ -40,38 +40,32 @@ namespace DX.Servers
         public static bool WriteTheFile(string path) 
         {
             
-
-
-
-
-
-
             using (System.IO.StreamWriter fs = new System.IO.StreamWriter(path, false))
             {
                 
-                fs.WriteLine("test " + DateTime.Now);
-                fs.WriteLine("CMDTYOE,REQRESTIME");
-                fs.WriteLine("FileList_get");
-                fs.WriteLine("FileList_put");
-                fs.WriteLine("FileList_getFileInfo");
-                fs.WriteLine("FileList_getDefaultFileInfo");
-                fs.WriteLine("File_beginDownload");
-                fs.WriteLine("File_beginPartiallyDownload");
-                fs.WriteLine("File_prepareDownload");
-                fs.WriteLine("File_download");
-                fs.WriteLine("File_flushDownload");
-                fs.WriteLine("File_endDownload");
-                fs.WriteLine("File_flush");
-                fs.WriteLine("File_beginLazyDownload");
-                fs.WriteLine("CPU_notifyParameterUpdated");
-                fs.WriteLine("CPU_isChangeConnectingIpAddr");
-                fs.WriteLine("File_beginUpload");
-                fs.WriteLine("File_upload");
-                fs.WriteLine("File_endUpload");
-                fs.WriteLine("Sync_lock");
-                fs.WriteLine("Sync_unlock");
-                fs.WriteLine("File_beginTarceDownload");
-                fs.WriteLine("File_endTraceDownload");
+                fs.WriteLine("# " + DateTime.Now);
+                fs.WriteLine("#CMDTYPE,REQRESTIME");
+                fs.WriteLine("FileList_get,0");
+                fs.WriteLine("FileList_put,0");
+                fs.WriteLine("FileList_getFileInfo,0");
+                fs.WriteLine("FileList_getDefaultFileInfo,0");
+                fs.WriteLine("File_beginDownload,0");
+                fs.WriteLine("File_beginPartiallyDownload,0");
+                fs.WriteLine("File_prepareDownload,0");
+                fs.WriteLine("File_download,0");
+                fs.WriteLine("File_flushDownload,0");
+                fs.WriteLine("File_endDownload,0");
+                fs.WriteLine("File_flush,0");
+                fs.WriteLine("File_beginLazyDownload,0");
+                fs.WriteLine("CPU_notifyParameterUpdated,0");
+                fs.WriteLine("CPU_isChangeConnectingIpAddr,0");
+                fs.WriteLine("File_beginUpload,0");
+                fs.WriteLine("File_upload,0");
+                fs.WriteLine("File_endUpload,0");
+                fs.WriteLine("Sync_lock,0");
+                fs.WriteLine("Sync_unlock,0");
+                fs.WriteLine("File_beginTarceDownload,0");
+                fs.WriteLine("File_endTraceDownload,0");
 
 
 

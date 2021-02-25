@@ -75,8 +75,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\CompareFileModel.cs" />
     <Compile Include="Servers\FileWriterServer.cs" />
+    <Compile Include="ViewModels\CompareWindowViewModel.cs" />
     <Compile Include="ViewModels\ProgressbartestWindowViewModel.cs" />
+    <Compile Include="Views\CompareWindow.xaml.cs">
+      <DependentUpon>CompareWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ProgressbartestWindow.xaml.cs">
       <DependentUpon>ProgressbartestWindow.xaml</DependentUpon>
     </Compile>
@@ -108,6 +113,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\CompareWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ProgressbartestWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
