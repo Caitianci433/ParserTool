@@ -11,19 +11,21 @@ using System.Windows;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using System.Windows.Input;
+using Microsoft.Win32;
+using DX.Views;
 
 namespace DX.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        
+        private CompareWindow compareWindow = null;
+
         public List<HttpModel> HttpList = new List<HttpModel>();
-
-
 
         public MainWindowViewModel()
         {
-            
+
         }
 
         private List<int> _portlist = new List<int>();
@@ -42,7 +44,7 @@ namespace DX.ViewModels
 
 
         private List<HttpModel> _tcppackets = new List<HttpModel>();
-        public  List<HttpModel> TcpPackets
+        public List<HttpModel> TcpPackets
         {
             get { return _tcppackets; }
             set { SetProperty(ref _tcppackets, value); }
@@ -61,6 +63,60 @@ namespace DX.ViewModels
             get { return _state; }
             set { SetProperty(ref _state, value); }
         }
+
+        #region Command
+        public ICommand MenuOpenCommand => new Command((o) =>
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Select the file";
+            openFileDialog.Filter = "pcapng|*.pcapng";
+            openFileDialog.FileName = string.Empty;
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.Multiselect = false;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.DefaultExt = "pcapng";
+            if (openFileDialog.ShowDialog() == false)
+            {
+                return;
+            }
+            string txtFile = openFileDialog.FileName;
+            var progressbartestWindow = new ProgressbartestWindow();
+            progressbartestWindow.Show();
+            StartParser(txtFile);
+            progressbartestWindow.Close();
+        });
+
+        public ICommand MenuSaveCommand => new Command((o) =>
+        {
+            // Configure save file dialog box
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "Document"; // Default file name
+            dlg.DefaultExt = ".text"; // Default file extension
+            dlg.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
+
+            // Show save file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // Save document 
+                string filename = dlg.FileName;
+                FileWriterServer.WriteTheFile(filename);
+
+            }
+        });
+
+        public ICommand MenuCompareCommand => new Command((o) =>
+        {
+            if (compareWindow == null)
+            {
+                compareWindow = new CompareWindow();
+                compareWindow.Closed += (s, e) => this.compareWindow = null;
+                compareWindow.Show();
+            }
+        });
+        #endregion
 
         private void InitData(string path ) 
         {

@@ -75,6 +75,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\Command.cs" />
     <Compile Include="Models\CompareFileModel.cs" />
     <Compile Include="Servers\FileWriterServer.cs" />
     <Compile Include="ViewModels\CompareWindowViewModel.cs" />

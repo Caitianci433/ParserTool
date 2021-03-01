@@ -34,12 +34,12 @@
 
         <Menu FontFamily="ＭＳ Ｐゴシック" FontSize="14">
             <MenuItem Header="File">
-                <MenuItem Header="Open" Click="Menu_OpenOnClick"></MenuItem>
-                <MenuItem Header="Save" Click="Menu_SaveOnClick"></MenuItem>
+                <MenuItem Header="Open" Command="{Binding MenuOpenCommand}"></MenuItem>
+                <MenuItem Header="Save" Command="{Binding MenuSaveCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Header="Settings"></MenuItem>
-                <MenuItem Header="Compare" Click="Menu_CompareOnClick"></MenuItem>
+                <MenuItem Header="Compare" Command="{Binding MenuCompareCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="Version" Click="MenuItem_Click"></MenuItem>

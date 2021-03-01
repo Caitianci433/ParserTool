@@ -19,7 +19,6 @@ namespace DX.Views
     public partial class MainWindow : Window
     {
         private FliterWindow fliterWindow=null;
-        private CompareWindow compareWindow = null;
         private ProgressbartestWindow progressbartestWindow ;
         public MainWindow()
         {
@@ -96,62 +95,6 @@ namespace DX.Views
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListView.ScrollIntoView(ListView.SelectedItem);
-        }
-        
-        private void Menu_OpenOnClick(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = "Select the file";
-            openFileDialog.Filter = "pcapng|*.pcapng";
-            openFileDialog.FileName = string.Empty;
-            openFileDialog.FilterIndex = 1;
-            openFileDialog.Multiselect = false;
-            openFileDialog.RestoreDirectory = true;
-            openFileDialog.DefaultExt = "pcapng";
-            if (openFileDialog.ShowDialog() == false)
-            {
-                return;
-            }
-            string txtFile = openFileDialog.FileName;
-            progressbartestWindow = new ProgressbartestWindow();
-            progressbartestWindow.Show();
-            (this.DataContext as MainWindowViewModel).StartParser(txtFile);
-            progressbartestWindow.Close();
-        }
-
-        private void Menu_SaveOnClick(object sender, RoutedEventArgs e)
-        {
-            // Configure save file dialog box
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.FileName = "Document"; // Default file name
-            dlg.DefaultExt = ".text"; // Default file extension
-            dlg.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
-
-            // Show save file dialog box
-            Nullable<bool> result = dlg.ShowDialog();
-
-            // Process save file dialog box results
-            if (result == true)
-            {
-                // Save document 
-                string filename = dlg.FileName;
-                FileWriterServer.WriteTheFile(filename);
-                
-            }
-        }
-
-        private void Menu_CompareOnClick(object sender, RoutedEventArgs e)
-        {
-            if (compareWindow == null)
-            {
-                compareWindow = new CompareWindow();
-                compareWindow.Closed += CompareWindow_Closed;
-                compareWindow.Show();
-            }
-        }
-        private void CompareWindow_Closed(object sender, System.EventArgs e)
-        {
-            this.compareWindow = null;
         }
     }
 }
