@@ -77,6 +77,7 @@
     </ApplicationDefinition>
     <Compile Include="Common\Command.cs" />
     <Compile Include="Models\CompareFileModel.cs" />
+    <Compile Include="Models\SaveFileModel.cs" />
     <Compile Include="Servers\FileWriterServer.cs" />
     <Compile Include="ViewModels\CompareWindowViewModel.cs" />
     <Compile Include="ViewModels\ProgressbartestWindowViewModel.cs" />

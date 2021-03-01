@@ -102,7 +102,7 @@ namespace DX.ViewModels
             {
                 // Save document 
                 string filename = dlg.FileName;
-                FileWriterServer.WriteTheFile(filename);
+                FileWriterServer.WriteTheFile(filename, HttpList);
 
             }
         });

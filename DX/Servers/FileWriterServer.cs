@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DX.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,42 +38,43 @@ namespace DX.Servers
 
     class FileWriterServer
     {
-        public static bool WriteTheFile(string path) 
+        public static bool WriteTheFile(string path, List<HttpModel> httplist) 
         {
-            
+            List<SaveFileModel> saveFileModels = InitCompareFileModel(httplist);
+
             using (System.IO.StreamWriter fs = new System.IO.StreamWriter(path, false))
             {
                 
                 fs.WriteLine("# " + DateTime.Now);
-                fs.WriteLine("#CMDTYPE,REQRESTIME");
-                fs.WriteLine("FileList_get,0");
-                fs.WriteLine("FileList_put,0");
-                fs.WriteLine("FileList_getFileInfo,0");
-                fs.WriteLine("FileList_getDefaultFileInfo,0");
-                fs.WriteLine("File_beginDownload,0");
-                fs.WriteLine("File_beginPartiallyDownload,0");
-                fs.WriteLine("File_prepareDownload,0");
-                fs.WriteLine("File_download,0");
-                fs.WriteLine("File_flushDownload,0");
-                fs.WriteLine("File_endDownload,0");
-                fs.WriteLine("File_flush,0");
-                fs.WriteLine("File_beginLazyDownload,0");
-                fs.WriteLine("CPU_notifyParameterUpdated,0");
-                fs.WriteLine("CPU_isChangeConnectingIpAddr,0");
-                fs.WriteLine("File_beginUpload,0");
-                fs.WriteLine("File_upload,0");
-                fs.WriteLine("File_endUpload,0");
-                fs.WriteLine("Sync_lock,0");
-                fs.WriteLine("Sync_unlock,0");
-                fs.WriteLine("File_beginTarceDownload,0");
-                fs.WriteLine("File_endTraceDownload,0");
+                fs.WriteLine("#CMDTYPE,IP,PORT,COMMANDINTERVAL,REQRESINTERVAL");
 
-
-
+                foreach (var saveFileModel in saveFileModels)
+                {
+                    fs.WriteLine(saveFileModel.CommandType+","+
+                                 saveFileModel.CommandInterval + "," +
+                                 saveFileModel.ReqResInterval + "," +
+                                 saveFileModel.IP + "," +
+                                 saveFileModel.Port 
+                                 );
+                }
             }
-
-
             return true;
+        }
+
+        private static List<SaveFileModel> InitCompareFileModel(List<HttpModel> httplist) 
+        {
+            List<SaveFileModel> saveFileModels = new List<SaveFileModel>();
+
+            //httplist to saveFileModels
+            SaveFileModel saveFileModel = new SaveFileModel();
+            saveFileModel.IP = "192.168.0.196";
+            saveFileModel.Port = 80;
+            saveFileModel.CommandType = "FileList_get";
+            saveFileModel.CommandInterval = 1;
+            saveFileModel.ReqResInterval = 2;
+            saveFileModels.Add(saveFileModel);
+
+            return saveFileModels;
         }
     }
 }

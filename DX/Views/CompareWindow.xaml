@@ -37,24 +37,24 @@
                 <GridView >
                     <GridViewColumn Width="150">
                         <GridViewColumnHeader >
-                            <TextBlock  x:Name="cmdtype" Text= "CMDTYOE"/>
+                            <TextBlock  x:Name="cmdtype" Text= "CMDTYPE"/>
                         </GridViewColumnHeader>
                     </GridViewColumn>
                     
-                    <GridViewColumn Width="100">
+                    <GridViewColumn Width="125">
                         <GridViewColumnHeader >
-                            <TextBlock  x:Name="leftcmd" Text= "LEFTCMD"/>
+                            <TextBlock  x:Name="leftcmd" Text= "LeftReqResInterval"/>
                         </GridViewColumnHeader>
                     </GridViewColumn>
                     
-                    <GridViewColumn Width="100"  >
+                    <GridViewColumn Width="125"  >
                         <GridViewColumnHeader >
-                            <TextBlock  x:Name="rightcmd" Text= "RIGHTCMD"/>
+                            <TextBlock  x:Name="rightcmd" Text= "RightReqResInterval"/>
                         </GridViewColumnHeader>
                     </GridViewColumn>
                     <GridViewColumn Width="150" >
                         <GridViewColumnHeader >
-                            <TextBlock  x:Name="interval" Text= "REQRESINTERVAL"/>
+                            <TextBlock  x:Name="interval" Text= "CompareInterval"/>
                         </GridViewColumnHeader>
                     </GridViewColumn>
 
