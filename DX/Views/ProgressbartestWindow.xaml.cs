@@ -12,25 +12,6 @@ namespace DX.Views
         public ProgressbartestWindow()
         {
             InitializeComponent();
-            this.DataContext = new ProgressbartestWindowViewModel();
-            //this.Activated += (s,e) => { ProgressBegin(); };
-            
         }
-
-        private void ProgressBegin()
-        {
-
-            Thread thread = new Thread(new ThreadStart(() =>
-            {
-                for (int i = 0; i <= 100; i++)
-                {
-                    this.progressBar1.Dispatcher.BeginInvoke((ThreadStart)delegate { this.progressBar1.Value = i; });
-                    Thread.Sleep(100);
-                }
-
-            }));
-            thread.Start();
-        }
-
     }
 }
