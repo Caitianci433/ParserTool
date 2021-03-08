@@ -1,25 +1,25 @@
 ﻿using DX.Common;
 using DX.Models;
 using DX.Servers;
+using DX.Views;
+using Microsoft.Win32;
+using Mvvm;
 using Prism.Mvvm;
+using Prism.Commands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Threading;
+using System.Windows.Controls;
 using System.Windows.Input;
-using Microsoft.Win32;
-using DX.Views;
 
 namespace DX.ViewModels
 {
-    public class MainWindowViewModel : BindableBase
+    public class MainWindowViewModel : ViewModelBase
     {
-        private CompareWindow compareWindow = null;
+        private FliterWindow fliterWindow = null;
 
         public List<HttpModel> HttpList = new List<HttpModel>();
 
@@ -65,7 +65,13 @@ namespace DX.ViewModels
         }
 
         #region Command
-        public ICommand MenuOpenCommand => new Command((o) =>
+        public ICommand DropCommand => new Command<DragEventArgs>((e) =>
+        {
+            string fileName = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            _ = new ProgressbarWindow(() => StartParser(fileName));
+        });
+
+        public ICommand MenuOpenCommand => new Command(() =>
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Title = "Select the file";
@@ -80,19 +86,21 @@ namespace DX.ViewModels
                 return;
             }
             string txtFile = openFileDialog.FileName;
-            var progressbartestWindow = new ProgressbartestWindow();
-            progressbartestWindow.Show();
-            StartParser(txtFile);
-            progressbartestWindow.Close();
+            _ = new ProgressbarWindow(() => StartParser(txtFile));
         });
 
-        public ICommand MenuSaveCommand => new Command((o) =>
+        public ICommand MenuSaveCommand => new Command(() =>
         {
+            if (Title== "PcapngParser")
+            {
+                MessageBox.Show("Please Import File");
+                return;
+            }
             // Configure save file dialog box
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.FileName = "Document"; // Default file name
-            dlg.DefaultExt = ".text"; // Default file extension
-            dlg.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
+            dlg.FileName = Title.Split(new string[] { ".pcapng" }, StringSplitOptions.None)[0]; // Default file name
+            dlg.DefaultExt = ".csv"; // Default file extension
+            dlg.Filter = "Csv documents (.csv)|*.csv"; // Filter files by extension
 
             // Show save file dialog box
             Nullable<bool> result = dlg.ShowDialog();
@@ -107,18 +115,50 @@ namespace DX.ViewModels
             }
         });
 
-        public ICommand MenuCompareCommand => new Command((o) =>
+        public ICommand MenuCompareCommand => new Command(() =>
         {
-            if (compareWindow == null)
+            var compareWindow = new CompareWindow();
+            compareWindow.ShowDialog();
+        });
+
+        public ICommand SearchTextChangedCommand => new Command<TextChangedEventArgs>((e) =>
+        {
+            string text = (e.Source as TextBox)?.Text;
+            TcpPackets = (from iteam in HttpList where iteam.Content.Contains(text ?? "") select iteam).ToList();
+        });
+
+        public ICommand SelectionChangedCommand => new Command<SelectionChangedEventArgs>((e) =>
+        {
+            object selectedItem = (e.Source as ComboBox).SelectedItem;
+            if (selectedItem != null)
             {
-                compareWindow = new CompareWindow();
-                compareWindow.Closed += (s, e) => this.compareWindow = null;
-                compareWindow.Show();
+                int port = (int)selectedItem;
+                List<HttpModel> list = HttpList;
+                TcpPackets = (from iteam in list where (iteam.TCP_DestinationPort == port) || (iteam.TCP_SourcePort == port) select iteam).ToList();
+            }
+            else
+            {
+                TcpPackets = HttpList;
+
+            }
+        });
+
+        public ICommand StatisticsClickedCommand => new Command(() =>
+        {
+            if (fliterWindow == null)
+            {
+                fliterWindow = new FliterWindow(this);
+                fliterWindow.Closed += (s, args) => this.fliterWindow = null;
+                fliterWindow.Show();
+            }
+            else
+            {
+                fliterWindow.Activate();
             }
         });
         #endregion
 
-        private void InitData(string path ) 
+        private void InitData(string path)
         {
             List<Block> BlockList = Tools.BytesToBlock(Tools.ReadPcapngFile(path));
             List<PacketData> Packist = new List<PacketData>();
@@ -132,7 +172,7 @@ namespace DX.ViewModels
                     {
                         PacketData packetData = new PacketData(blockBody.PacketData);
                         packetData.Time = blockBody.Time;
-                        if (packetData.IP_Protocol==6)
+                        if (packetData.IP_Protocol == 6)
                         {
                             Packist.Add(packetData);
                         }
@@ -140,62 +180,45 @@ namespace DX.ViewModels
                 }
 
             }
-            DispacherPacket(Packist);
+            DispatcherPacket(Packist);
         }
 
-        private void DispacherPacket(List<PacketData> Packist) 
+        private void DispatcherPacket(List<PacketData> Packist)
         {
-            IEnumerator itor = Packist.GetEnumerator();
-            List<int> pl = new List<int>();
+            IEnumerator<PacketData> itor = Packist.GetEnumerator();
             Dictionary<int, List<PacketData>> mp = new Dictionary<int, List<PacketData>>();
             while (itor.MoveNext())
             {
-                PacketData data = itor.Current as PacketData;
-                if (data.TCP_SourcePort==80)
+                PacketData data = itor.Current;
+                if (data.TCP_SourcePort == 80)
                 {
-                    // res
-                    if (!mp.ContainsKey(data.TCP_DestinationPort))
+                    if (mp.TryGetValue(data.TCP_DestinationPort, out List<PacketData> dataList))
                     {
-                        List<PacketData> newlist = new List<PacketData>();
-                        newlist.Add(data);
-                        mp.Add(data.TCP_DestinationPort, newlist);
+                        dataList.Add(data);
                     }
                     else
                     {
-                        List<PacketData> oldlist;
-                        mp.TryGetValue(data.TCP_DestinationPort, out oldlist);
-                        oldlist.Add(data);
+                        mp.Add(data.TCP_DestinationPort, new List<PacketData>() { data });
                     }
                 }
-                else if(data.TCP_DestinationPort==80)
+                else if (data.TCP_DestinationPort == 80)
                 {
-                    // req
-                    if (!mp.ContainsKey(data.TCP_SourcePort))
+                    if (mp.TryGetValue(data.TCP_SourcePort, out List<PacketData> dataList))
                     {
-                        List<PacketData> newlist = new List<PacketData>();
-                        newlist.Add(data);
-                        mp.Add(data.TCP_SourcePort, newlist);
+                        dataList.Add(data);
                     }
                     else
                     {
-                        List<PacketData> oldlist;
-                        mp.TryGetValue(data.TCP_SourcePort, out oldlist);
-                        oldlist.Add(data);
+                        mp.Add(data.TCP_SourcePort, new List<PacketData> { data });
                     }
                 }
             }
 
-            PortList.Clear();
-            foreach (var item in mp.Keys)
-            {
-                pl.Add(item);
-            }
-
-            PortList = pl;
+            PortList = mp.Keys.ToList();
             HttpList = HttpFromPacketData(mp);
         }
 
-        private List<HttpModel> HttpFromPacketData(Dictionary<int, List<PacketData>> mp ) 
+        private List<HttpModel> HttpFromPacketData(Dictionary<int, List<PacketData>> mp)
         {
             List<HttpModel> listViewModelforView = new List<HttpModel>();
 
@@ -231,16 +254,16 @@ namespace DX.ViewModels
         }
 
 
-        private HttpModel CreatHttpModel(PacketData data,string message) 
+        private HttpModel CreatHttpModel(PacketData data, string message)
         {
-            
+
             HttpModel ls = new HttpModel();
             ls.IP_DestinationAddress = string.Join(",", data.IP_DestinationAddress);
             ls.IP_SourceAddress = string.Join(",", data.IP_SourceAddress);
             ls.TCP_DestinationPort = data.TCP_DestinationPort;
             ls.TCP_SourcePort = data.TCP_SourcePort;
             ls.Time = data.Time;
-            
+
             string[] a = message.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.None);
             ls.Content = a[1];
             string[] b = message.Split(new string[] { "\r\n" }, StringSplitOptions.None);
@@ -248,26 +271,8 @@ namespace DX.ViewModels
             ls.Body = a[0].Replace(b[0] + "\r\n", "");
             return ls;
         }
-        public void Grid_Drop(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effects = DragDropEffects.Link;
-            }
-            else
-            {
-                e.Effects = DragDropEffects.None;
-            }
 
-        }
-
-        public void Grid_DragEnter(object sender, DragEventArgs e)
-        {
-            string fileName = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
-            StartParser(fileName);
-        }
-
-        public void StartParser(string fileName) 
+        public void StartParser(string fileName)
         {
             Title = fileName + " is loading";
 
@@ -292,22 +297,30 @@ namespace DX.ViewModels
                 MessageBox.Show("Parser file ERROR!");
                 return;
             }
-        } 
+
+            if (fliterWindow != null)
+            {
+                fliterWindow.Close();
+                fliterWindow = new FliterWindow(this);
+                fliterWindow.Closed += (s, args) => this.fliterWindow = null;
+                fliterWindow.Show();
+            }
+        }
         private void OnParser()
         {
             ParserServer.Parser(HttpList);
             // state 
-            var ErrorList   = from iteam
-                              in HttpList
-                              where iteam.ErrorCode == ErrorCode.RESPONSE_ERROR || iteam.ErrorCode == ErrorCode.NET_NO_RESPONSE
-                              select iteam;
+            var ErrorList = from iteam
+                            in HttpList
+                            where iteam.ErrorCode == ErrorCode.RESPONSE_ERROR || iteam.ErrorCode == ErrorCode.NET_NO_RESPONSE
+                            select iteam;
 
             var WarningList = from iteam
                               in HttpList
                               where iteam.ErrorCode == ErrorCode.NET_TIMEOUT || iteam.ErrorCode == ErrorCode.HTTP_ERROR
                               select iteam;
 
-            if (WarningList.Count()>0)
+            if (WarningList.Count() > 0)
             {
                 State = StateCode.ERROR;
             }

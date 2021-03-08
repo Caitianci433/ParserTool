@@ -2,11 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"             
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:cmd="clr-namespace:Mvvm;assembly=Mvvm"
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:local="clr-namespace:DX.Models"
              Title="FliterWindow"  WindowStartupLocation="CenterScreen"
-             Height="560" MaxHeight="560" MinHeight="560" Width="800" MaxWidth="800" MinWidth="800"  
-             ResizeMode="NoResize" >
+             Height="560" MinHeight="200" Width="670" MinWidth="600">
     <Window.Resources>
         <local:IndexConverter x:Key="MyIndexConverter"/>
         <local:UlongToDateTimeConverter x:Key="L2S"/>
@@ -15,6 +16,7 @@
         <local:PortToDestinationConverter x:Key="P2D"/>
         <local:StringToStringLengthConverter x:Key="S2L"/>
         <local:StringLimitForFliterWindowConverter x:Key="S2LLF"/>
+        <local:ErrorCodeToSampleErrorMessageConverter x:Key="EC2SEM"/>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -23,6 +25,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
@@ -41,19 +44,37 @@
                     <Image Source="/Images/fliter.jpeg"></Image>
                 </Button>
 
-                <ComboBox  x:Name="combobox"  ItemsSource="{Binding Path=IPList}"  
-                           SelectionChanged="ComboBox_SelectionChanged">
+                <ComboBox  x:Name="combobox"  ItemsSource="{Binding Path=IPList}">
+                    
                 </ComboBox>
             </StackPanel>
 
-            
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button HorizontalAlignment="Left" Background="White" 
+                        ToolTip="Collapse all"
+                        Command="{Binding SwitchFoldCommand}" CommandParameter="0">
+                    <Image Source="/Images/fold_off.bmp"/>
+                </Button>
+                <Button Margin="5,0,0,0" HorizontalAlignment="Left" Background="White" 
+                        ToolTip="Show all"
+                        Command="{Binding SwitchFoldCommand}" CommandParameter="1">
+                    <Image Source="/Images/fold_on.bmp"/>
+                </Button>
+            </StackPanel>
         </Grid>
         <Grid  Grid.Row="1">
             
         <TreeView Name="FliterTreeView" >
-            <TreeViewItem Header="ERROR" IsSelected="True" >
+                <TreeViewItem Header="ERROR" IsSelected="True" IsExpanded="{Binding IsErrorExpanded}">
                     <ListView x:Name="errorlist"  Grid.Row="1" Grid.Column="0"
-                          ItemsSource="{Binding Path=ErrorList}"   SelectionChanged="errorlist_SelectionChanged">
+                          ItemsSource="{Binding Path=ErrorList}">
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <cmd:EventCommand Command="{Binding ListSelectionChangedCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
                         <ListView.View>
                             <GridView >
                                 <GridViewColumn Width="50" DisplayMemberBinding ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}" >
@@ -96,7 +117,7 @@
                                     </GridViewColumnHeader>
                                 </GridViewColumn>
 
-                                <GridViewColumn DisplayMemberBinding="{Binding Path=Content,Converter={StaticResource S2LLF}}" Width="200">
+                                <GridViewColumn DisplayMemberBinding="{Binding Path=ErrorCode,Converter={StaticResource EC2SEM}}" Width="200">
                                     <GridViewColumnHeader >
                                         <TextBlock  x:Name="length" Text= "CONTENT" HorizontalAlignment="Center"/>
                                     </GridViewColumnHeader>
@@ -106,9 +127,16 @@
                     </ListView>
                 </TreeViewItem>
 
-            <TreeViewItem Header="WARNING" IsSelected="True">
+                <TreeViewItem Header="WARNING" IsSelected="True" IsExpanded="{Binding IsWaringExpanded}">
                     <ListView x:Name="warninglist"  Grid.Row="1" Grid.Column="0"
-                          ItemsSource="{Binding Path=WarningList}"   SelectionChanged="warninglist_SelectionChanged">
+                          ItemsSource="{Binding Path=WarningList}">
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <cmd:EventCommand Command="{Binding ListSelectionChangedCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
                         <ListView.View>
                             <GridView >
                                 <GridViewColumn Width="50" DisplayMemberBinding ="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Converter={StaticResource MyIndexConverter}}" >
@@ -151,7 +179,7 @@
                                     </GridViewColumnHeader>
                                 </GridViewColumn>
 
-                                <GridViewColumn DisplayMemberBinding="{Binding Path=Content,Converter={StaticResource S2LLF}}" Width="200">
+                                <GridViewColumn DisplayMemberBinding="{Binding Path=ErrorCode,Converter={StaticResource EC2SEM}}" Width="200">
                                     <GridViewColumnHeader >
                                         <TextBlock Text= "CONTENT" HorizontalAlignment="Center"/>
                                     </GridViewColumnHeader>

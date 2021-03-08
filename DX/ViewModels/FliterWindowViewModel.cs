@@ -1,18 +1,24 @@
 ﻿using DX.Models;
 using DX.Views;
+using Mvvm;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DX.ViewModels
 {
-    public class FliterWindowViewModel : BindableBase
+    public class FliterWindowViewModel : ViewModelBase
     {
+        private readonly Action<HttpModel> refreshMessage;
         
         public FliterWindowViewModel(MainWindowViewModel dataContext)
         {
+            refreshMessage = (date) => dataContext.TcpPacket = date;
+
             ErrorList = from iteam 
                         in dataContext.HttpList 
                         where iteam.ErrorCode== ErrorCode.RESPONSE_ERROR  || iteam.ErrorCode == ErrorCode.NET_NO_RESPONSE
@@ -71,5 +77,31 @@ namespace DX.ViewModels
             set { SetProperty(ref _iplist, value); }
         }
 
+        private bool isErrorExpanded = true;
+        public bool IsErrorExpanded
+        {
+            get => isErrorExpanded;
+            set => SetProperty(ref isErrorExpanded, value);
+        }
+
+        private bool isWaringExpanded = true;
+        public bool IsWaringExpanded
+        {
+            get => isWaringExpanded;
+            set => SetProperty(ref isWaringExpanded, value);
+        }
+
+        public ICommand SwitchFoldCommand => new Command<string>((e) =>
+        {
+            IsErrorExpanded = IsWaringExpanded = e == "1";
+        });
+
+        public ICommand ListSelectionChangedCommand => new Command<SelectionChangedEventArgs>((e) =>
+        {
+            if (((ListView)e.Source).SelectedItem is HttpModel httpModel)
+            {
+                refreshMessage(httpModel);
+            }
+        });
     }
 }

@@ -45,11 +45,15 @@ namespace DX.Views
         {
             string LeftFilePath = lefttextbox.Text;
             string RightFilePath = righttextbox.Text;
-
-            using (System.IO.StreamReader fsleft = new System.IO.StreamReader(LeftFilePath))
+            if (LeftFilePath==""|| RightFilePath == "")
             {
-
+                MessageBox.Show("Please Import The File");
             }
+            else
+            {
+                
+            }
+            
         }
     }
 }

@@ -7,35 +7,6 @@ using System.Threading.Tasks;
 
 namespace DX.Servers
 {
-    public enum CMDTYPE
-    {
-        ERRORCMD = 0,
-        Download_FileList_get,
-        Download_FileList_put,
-        Download_FileList_getFileInfo,
-        Download_FileList_getDefaultFileInfo,
-        Download_File_beginDownload,
-        Download_File_beginPartiallyDownload,
-        Download_File_prepareDownload,
-        Download_File_download,
-        Download_File_flushDownload,
-        Download_File_endDownload,
-        Download_File_flush,
-        Download_File_beginLazyDownload,
-        Download_CPU_notifyParameterUpdated,
-        Download_CPU_isChangeConnectingIpAddr,
-        Download_File_beginUpload,
-        Download_File_upload,
-        Download_File_endUpload,
-        Download_Sync_lock,
-        Download_Sync_unlock,
-        Download_File_beginTarceDownload,
-        Download_File_endTraceDownload,
-        OTHERS
-    }
-
-
-
     class FileWriterServer
     {
         public static bool WriteTheFile(string path, List<HttpModel> httplist) 
@@ -45,8 +16,8 @@ namespace DX.Servers
             using (System.IO.StreamWriter fs = new System.IO.StreamWriter(path, false))
             {
                 
-                fs.WriteLine("# " + DateTime.Now);
-                fs.WriteLine("#CMDTYPE,IP,PORT,COMMANDINTERVAL,REQRESINTERVAL");
+                fs.WriteLine("# Time" + DateTime.Now+"Length:"+ saveFileModels.Count.ToString());
+                fs.WriteLine("#CMDTYPE,COMMANDINTERVAL,REQRESINTERVAL,IP,PORT");
 
                 foreach (var saveFileModel in saveFileModels)
                 {
@@ -66,15 +37,74 @@ namespace DX.Servers
             List<SaveFileModel> saveFileModels = new List<SaveFileModel>();
 
             //httplist to saveFileModels
-            SaveFileModel saveFileModel = new SaveFileModel();
-            saveFileModel.IP = "192.168.0.196";
-            saveFileModel.Port = 80;
-            saveFileModel.CommandType = "FileList_get";
-            saveFileModel.CommandInterval = 1;
-            saveFileModel.ReqResInterval = 2;
-            saveFileModels.Add(saveFileModel);
+            ParserServer.Parser(httplist);
+            for (int i = 0; i < ParserServer.list.Count; i++)
+            {
+                SaveFileModel saveFileModel = new SaveFileModel();
 
+                saveFileModel.IP = ParserServer.list[i].Req.IP_SourceAddress.Replace(',', '.');
+
+                saveFileModel.Port = ParserServer.list[i].Req.TCP_SourcePort;
+
+                saveFileModel.CommandType = GetCmdTypeFromHttpModel(ParserServer.list[i]);
+
+                saveFileModel.CommandInterval = GetCmdIntervalFromHttpModel(ParserServer.list[i]);
+
+                saveFileModel.ReqResInterval = GetReqResIntervalFromHttpModel(ParserServer.list[i]);
+
+
+
+                saveFileModels.Add(saveFileModel);
+            }
             return saveFileModels;
         }
+
+        private static string GetCmdTypeFromHttpModel(ReqRse reqres) 
+        {
+            string cmd;
+            if (reqres.Req.Content.Length==0)
+            {
+                cmd = reqres.Req.Head;
+            }
+            else
+            {
+                cmd = reqres.Req.Content;
+            }
+
+            var ret = "Unkown CMD";
+            _ = Common.CommandManager.Commands.Any(c =>
+            {
+                if (cmd.Contains(c))
+                {
+                    ret = c;
+                    return true;
+                }
+                return false;
+            });
+            return ret;
+
+
+        }
+        private static int GetCmdIntervalFromHttpModel(ReqRse reqres)
+        {
+
+
+
+
+
+
+            return 0;
+        }
+        private static int GetReqResIntervalFromHttpModel(ReqRse reqres)
+        {
+
+
+
+
+
+
+            return 0;
+        }
+
     }
 }

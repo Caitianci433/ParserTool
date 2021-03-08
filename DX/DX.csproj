@@ -51,6 +51,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mvvm">
+      <HintPath>package\Mvvm.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>package\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -75,20 +82,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Common\Command.cs" />
+    <Compile Include="Common\CommandManager.cs" />
     <Compile Include="Models\CompareFileModel.cs" />
     <Compile Include="Models\SaveFileModel.cs" />
     <Compile Include="Servers\FileWriterServer.cs" />
     <Compile Include="ViewModels\CompareWindowViewModel.cs" />
-    <Compile Include="ViewModels\ProgressbartestWindowViewModel.cs" />
     <Compile Include="Views\CompareWindow.xaml.cs">
       <DependentUpon>CompareWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ProgressbartestWindow.xaml.cs">
-      <DependentUpon>ProgressbartestWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\UserControls\LoadingWait.xaml.cs">
-      <DependentUpon>LoadingWait.xaml</DependentUpon>
+    <Compile Include="Views\ProgressbarWindow.xaml.cs">
+      <DependentUpon>ProgressbarWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\FliterWindow.xaml">
       <SubType>Designer</SubType>
@@ -122,11 +125,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ProgressbartestWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\UserControls\LoadingWait.xaml">
+    <Page Include="Views\ProgressbarWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -150,6 +149,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="Command.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\DataSources\DX.ViewModels.MainWindowViewModel.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -176,6 +178,10 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\fold_off.bmp" />
+    <Resource Include="Images\fold_on.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

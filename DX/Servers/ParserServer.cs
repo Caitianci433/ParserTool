@@ -28,12 +28,12 @@ namespace DX.Servers
         {
             mp.Clear();
             list.Clear();
-            DispacherPacket(https);
+            DispatcherPacket(https);
             ParserCheck();
         }
 
         
-        private static void DispacherPacket(List<HttpModel> Packist)
+        private static void DispatcherPacket(List<HttpModel> Packist)
         {
             IEnumerator itor = Packist.GetEnumerator();
             while (itor.MoveNext())
@@ -60,7 +60,7 @@ namespace DX.Servers
                     // req
                     if (!mp.ContainsKey(data.TCP_SourcePort))
                     {
-                        List<HttpModel> newlist = new List<HttpModel>(); ;
+                        List<HttpModel> newlist = new List<HttpModel>();
                         newlist.Add(data);
                         mp.Add(data.TCP_SourcePort, newlist);
                     }
@@ -160,32 +160,9 @@ namespace DX.Servers
             {
                 if (http.Req != null && http.Res != null)
                 {
-                    //download
-                    if (http.Req.Content.Contains("FileList_get") || 
-                        http.Req.Content.Contains("FileList_put") ||
-                        http.Req.Content.Contains("FileList_getFileInfo") ||
-                        http.Req.Content.Contains("FileList_getDefaultFileInfo") ||
-                        http.Req.Content.Contains("File_beginDownload") ||
-                        http.Req.Content.Contains("File_beginPartiallyDownload") ||
-                        http.Req.Content.Contains("File_prepareDownload") ||
-                        http.Req.Content.Contains("File_download") ||
-                        http.Req.Content.Contains("File_flushDownload") ||
-                        http.Req.Content.Contains("File_endDownload") ||
-                        http.Req.Content.Contains("File_flush") ||
-                        http.Req.Content.Contains("File_beginLazyDownload") ||
-                        http.Req.Content.Contains("CPU_notifyParameterUpdated") ||
-                        http.Req.Content.Contains("CPU_isChangeConnectingIpAddr") ||
-                        http.Req.Content.Contains("File_beginUpload") ||
-                        http.Req.Content.Contains("File_upload") ||
-                        http.Req.Content.Contains("File_endUpload") ||
-                        http.Req.Content.Contains("Sync_lock") ||
-                        http.Req.Content.Contains("Sync_unlock") ||
-                        http.Req.Content.Contains("File_beginTarceDownload") ||
-                        http.Req.Content.Contains("File_endTraceDownload") 
-                        )
+                    if (Common.CommandManager.Commands.Any(c=> http.Req.Content.Contains(c)))
                     {
-                        
-                        
+
                     }
 
                 }

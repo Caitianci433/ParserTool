@@ -18,5 +18,7 @@ namespace DX.Models
 
         public int ReqResInterval { get; set; }
 
+
+
     }
 }

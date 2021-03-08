@@ -2,9 +2,18 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        xmlns:local="clr-namespace:DX.Models"
+        xmlns:local="clr-namespace:DX.Models" 
+        xmlns:cmd="clr-namespace:Mvvm;assembly=Mvvm"
         Title="{Binding Path=Title}" Height="500" Width="900" WindowStartupLocation="CenterScreen">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Drop">
+            <cmd:EventCommand Command="{Binding DropCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <Window.Resources>
         <local:IndexConverter x:Key="MyIndexConverter"/>
         <local:StringToStringLengthConverter x:Key="S2L"/>
@@ -14,13 +23,20 @@
         <local:BytesFormatConverter x:Key="BytesFormat"/>
         <local:IPConverter x:Key="IP"/>
         <local:ClourConverter x:Key="clor"/>
+        <local:ColorMessageConverter x:Key="colorMessage"/>
         <local:StateConverter x:Key="State"/>
         <local:StringLimitConverter x:Key="StrLimit"/>
+        <local:ErrorCodeToErrorMessageConverter x:Key="EC2EM"/>
         
         <Style x:Key="ClorItemStyle" TargetType="{x:Type ListViewItem}">
             <Setter Property="Background">
                 <Setter.Value>
                     <Binding RelativeSource="{RelativeSource Self}" Converter="{StaticResource clor}"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ToolTip">
+                <Setter.Value>
+                    <Binding RelativeSource="{RelativeSource Self}" Converter="{StaticResource colorMessage}"/>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -34,8 +50,8 @@
 
         <Menu FontFamily="ＭＳ Ｐゴシック" FontSize="14">
             <MenuItem Header="File">
-                <MenuItem Header="Open" Command="{Binding MenuOpenCommand}"></MenuItem>
-                <MenuItem Header="Save" Command="{Binding MenuSaveCommand}"></MenuItem>
+                <MenuItem Header="Import" Command="{Binding MenuOpenCommand}"></MenuItem>
+                <MenuItem Header="Export" Command="{Binding MenuSaveCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Header="Settings"></MenuItem>
@@ -74,18 +90,28 @@
                     <Button Click="Button_Click">
                         <Image Source="/Images/fliter.jpeg"></Image>
                     </Button>
-                    
-                    <ComboBox  x:Name="combobox"  ItemsSource="{Binding Path=PortList}"  SelectionChanged="ComboBox_SelectionChanged">
-                        
+
+                    <ComboBox  x:Name="combobox"  ItemsSource="{Binding Path=PortList}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                            <cmd:EventCommand Command="{Binding SelectionChangedCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                     </ComboBox>
                     <Separator Width="10" Background="White"></Separator>
-                    <TextBox x:Name="searchtext" Width="120" TextChanged="OnSearch" BorderBrush="Black"></TextBox>
+                    <TextBox Width="120" BorderBrush="Black">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="TextChanged">
+                                <cmd:EventCommand Command="{Binding SearchTextChangedCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
                     <Separator Width="10" Background="White"></Separator>
                     <Image Source="/Images/search.jpeg"></Image>
                     <Separator Width="10" Background="White"></Separator>
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">State:</TextBlock>
                     <Separator Width="10" Background="White"></Separator>
-                    <Button Click="Statistics_Click">
+                    <Button Command="{Binding StatisticsClickedCommand}">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Rectangle Fill="{Binding Path=State,Converter={StaticResource State}}"   Stroke="Black"  Width="30" HorizontalAlignment="Right"/>
@@ -151,7 +177,7 @@
                 </ListView>
                 
             </Grid>
-            
+
 
             <GridSplitter Grid.Row="0" Grid.Column="1" Width="10" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Wheat"/>
 
@@ -165,40 +191,40 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <TreeView Name="myTreeViewEvent" Grid.Row="0" Grid.Column="0" DataContext="{Binding Path=TcpPacket}">
-                            <TreeViewItem Header="HTTP HEADER" IsSelected="True" >
+                            <TreeViewItem Header="HTTP HEADER" IsSelected="True" IsExpanded="True">
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
                                         <DockPanel>
-                                    <TextBox x:Name="header_detail" Text="{Binding Path=Head}"></TextBox>
+                                    <TextBox x:Name="header_detail" Text="{Binding Path=Head}" IsReadOnly="True"></TextBox>
                                         </DockPanel>
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
                             </TreeViewItem>
 
-                            <TreeViewItem Header="HTTP BODY" IsSelected="True">
+                    <TreeViewItem Header="HTTP BODY" IsSelected="True" IsExpanded="True">
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
                                         <DockPanel>
-                                    <TextBox x:Name="body_detail" Text="{Binding Path=Body}"></TextBox>
+                                    <TextBox x:Name="body_detail" Text="{Binding Path=Body}" IsReadOnly="True"></TextBox>
                                         </DockPanel>
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
                             </TreeViewItem>
 
-                            <TreeViewItem Header="HTTP CONTENT" IsSelected="True">
+                    <TreeViewItem Header="HTTP CONTENT" IsSelected="True" IsExpanded="True">
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
                                         <DockPanel>
-                                    <TextBox x:Name="content_detail" Text="{Binding Path=Content,Converter={StaticResource StrLimit}}"></TextBox>
+                                    <TextBox x:Name="content_detail" Text="{Binding Path=Content,Converter={StaticResource StrLimit}}" IsReadOnly="True"></TextBox>
                                         </DockPanel>
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
                             </TreeViewItem>
-                            <TreeViewItem Header="Message" IsSelected="True">
+                    <TreeViewItem Header="Message" IsSelected="True" IsExpanded="True">
                                 <TreeViewItem>
                                     <TreeViewItem.Header >
                                         <DockPanel>
-                                            <TextBlock x:Name="detail" >No Problem</TextBlock>
+                                    <TextBlock x:Name="detail" Text="{Binding Path=ErrorCode,Converter={StaticResource EC2EM}}"></TextBlock>
                                         </DockPanel>
                                     </TreeViewItem.Header>
                                 </TreeViewItem>
@@ -209,7 +235,8 @@
                 
                 <GridSplitter Grid.Row="1" Grid.Column="0" Height="10" HorizontalAlignment="Stretch" Background="Wheat"/>
 
-                <TextBox x:Name="byte_detail" Grid.Row="2" Grid.Column="0" Text="{Binding TcpPacket,Converter={StaticResource BytesFormat}}" FontSize="12" FontFamily="Courier New"/>
+                <TextBox x:Name="byte_detail" Grid.Row="2" Grid.Column="0" Text="{Binding TcpPacket,Converter={StaticResource BytesFormat}}" 
+                         FontSize="12" FontFamily="Courier New" IsReadOnly="True"/>
                 
 
 
